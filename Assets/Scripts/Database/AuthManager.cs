@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Firebase;
 using Firebase.Auth;
 using TMPro;
 using UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Database
 {
@@ -33,22 +35,71 @@ namespace Database
     public TMP_InputField passwordRegisterField;
     public TMP_InputField confirmPasswordRegisterField;
 
-    private void Awake()
+    private void Start()
     {
-      // Check that all of the necessary dependencies for firebase are present on the system
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
-      {
-        dependencyStatus = task.Result;
+      StartCoroutine(CheckAndFixDependenciesAsync());
+    }
+    // private void Awake()
+    // {
+    //   InitializeFirebase();
+    //   // Check that all of the necessary dependencies for firebase are present on the system
+    //   // FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+    //   // {
+    //   //   dependencyStatus = task.Result;
+    //   //
+    //   //   if (dependencyStatus == DependencyStatus.Available)
+    //   //   {
+    //   //     
+    //   //   }
+    //   //   else
+    //   //   {
+    //   //     Debug.LogError("Could not resolve all firebase dependencies: " + dependencyStatus);
+    //   //   }
+    //   // });
+    // }
 
-        if (dependencyStatus == DependencyStatus.Available)
-        {
-          InitializeFirebase();
-        }
-        else
-        {
-          Debug.LogError("Could not resolve all firebase dependencies: " + dependencyStatus);
-        }
-      });
+    private IEnumerator CheckAndFixDependenciesAsync()
+    {
+      Task<DependencyStatus> dependencyTask = FirebaseApp.CheckAndFixDependenciesAsync();
+      yield return new WaitUntil(() => dependencyTask.IsCompleted);
+      dependencyStatus = dependencyTask.Result;
+      if (dependencyStatus == DependencyStatus.Available)
+      {
+        InitializeFirebase();
+        yield return new WaitForEndOfFrame();
+        StartCoroutine(CheckForAutoLogin());
+      }
+      else
+      {
+        Debug.LogError("Could not resolve all firebase dependencies: " + dependencyStatus);
+      }
+    }
+
+    private IEnumerator CheckForAutoLogin()
+    {
+      if (user != null)
+      {
+        Task reloadUserTask = user.ReloadAsync();
+        yield return new WaitUntil(() => reloadUserTask.IsCompleted);
+        AutoLogin();
+      }
+      else
+      {
+        UIManager.Instance.OpenLoginPanel();
+      }
+    }
+
+    private void AutoLogin()
+    {
+      if (user != null)
+      {
+        References.userName = user.DisplayName;
+        SceneManager.LoadScene("Scenes/GameScene");
+      }
+      else
+      {
+        UIManager.Instance.OpenLoginPanel();
+      }
     }
 
     void InitializeFirebase()
