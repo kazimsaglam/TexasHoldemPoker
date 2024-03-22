@@ -37,6 +37,24 @@ namespace Database
       FirebaseAuth auth = FirebaseAuth.DefaultInstance;
       string email = signUpEmail.text;
       string password = signUpPassword.text;
+      string passwordConfirmation = signUpPasswordConfirmation.text;
+
+      // Check if any of the required fields are empty
+      if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(passwordConfirmation))
+      {
+        ShowLogMessage("Please fill in all fields!");
+        loadingScreen.SetActive(false);
+        return;
+      }
+
+      if (password != passwordConfirmation)
+      {
+        ShowLogMessage("Password and confirmation do not match!");
+        loadingScreen.SetActive(false);
+        return;
+      }
+
+      // Proceed with user registration
       auth.CreateUserWithEmailAndPasswordAsync(email, password)
         .ContinueWithOnMainThread(task =>
         {
@@ -48,28 +66,17 @@ namespace Database
 
           if (task.IsFaulted)
           {
-            Debug.LogError("Operation is encountered with an error: " +
-                           task.Exception);
+            Debug.LogError("Operation is encountered with an error: " + task.Exception);
             return;
           }
 
           loadingScreen.SetActive(false);
           AuthResult result = task.Result;
-          Debug.LogFormat("User created successfully: {0} ({1})",
-            result.User.DisplayName, result.User.UserId);
-
+          Debug.LogFormat("User created successfully: {0} ({1})", result.User.DisplayName, result.User.UserId);
           signUpEmail.text = "";
           signUpPassword.text = "";
           signUpPasswordConfirmation.text = "";
-          if (result.User.IsEmailVerified)
-          {
-            showLogMsg("Sign up Successful");
-          }
-          else
-          {
-            showLogMsg("Please verify your email!!");
-            SendEmailVerification();
-          }
+          ShowLogMessage("Sign up Successful");
         });
     }
 
@@ -274,7 +281,7 @@ namespace Database
       FirebaseAuth auth = FirebaseAuth.DefaultInstance;
       string email = loginEmail.text;
       string password = loginPassword.text;
-
+     
       Credential credential =
         EmailAuthProvider.GetCredential(email, password);
       auth.SignInAndRetrieveDataWithCredentialAsync(credential)
@@ -307,7 +314,7 @@ namespace Database
 
     #region extra
 
-    void showLogMsg(string msg)
+    void ShowLogMessage(string msg)
     {
       logText.text = msg;
       logText.GetComponent<Animation>().Play("textFadeout");
