@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 public class DeckManager : MonoBehaviour
 {
-    //public List<CardData> deck;
+    public List<CardData> deck;
 
     public GameObject cardPrefab;
-    //public List<CardData> listOfCards;
+    public List<CardData> listOfCards;
 
     public int cardSpacing = 80;
 
@@ -30,16 +31,20 @@ public class DeckManager : MonoBehaviour
     private int numHand = 1;
     private int numCardsBoard = 0;
 
+    private CardDealerAnimation cardDealerAnim;
+
 
     private void Start()
     {
+        cardDealerAnim = GetComponent<CardDealerAnimation>();
+
         for (int i = 0; i < playerCards.Length; i++)
         {
             playerCards[i] = new List<Card>();
         }
 
-        //deck = listOfCards;
-        //deck.Shuffle();
+        deck = listOfCards;
+        deck.Shuffle();
     }
 
 
@@ -73,39 +78,43 @@ public class DeckManager : MonoBehaviour
     {
         if (playerCards[0].Count == 0)
         {
-            for (int i = 0; i < 4; i++) //Number of people
-            {
-                for (int j = 0; j < 2; j++) //Number of cards to be drawn
-                {
-                    var cardObj = InstantiateCard(deck[j], placeholderPlayerHands[i].transform.position, placeholderPlayerHands[i].transform, j);
-
-
-                    playerCards[i].Add(cardObj.GetComponent<Card>());
-                    deck.Remove(deck[j]);
-                }
-            }
+            StartCoroutine(DrawPlayerCardsCoroutine());
         }
 
-        drawPlayerCardsButton.SetActive(false);
+        
     }
 
 
     // Instantiates a card 
     private GameObject InstantiateCard(CardData data, Vector3 pos, Transform parent, int numCard)
     {
-
         cardObj = Instantiate(cardPrefab, new Vector3(pos.x + (cardSpacing * numCard), pos.y, 0), Quaternion.identity, parent);
-
-
 
         cardObj.GetComponent<Card>().cardValue = data.cardValue;
         cardObj.GetComponent<Card>().cardColor = data.cardColor;
         cardObj.name = $"{data.cardValue} {data.cardColor}";
         cardObj.transform.GetChild(1).GetComponent<Image>().sprite = data.cardSprite;
 
-
         return cardObj;
+    }
 
+    IEnumerator DrawPlayerCardsCoroutine()
+    {
+        for (int i = 0; i < 4; i++) //Number of people
+        {
+            for (int j = 0; j < 2; j++) //Number of cards to be drawn
+            {
+                var cardObj = InstantiateCard(deck[j], transform.position, placeholderPlayerHands[i].transform, j);
+                playerCards[i].Add(cardObj.GetComponent<Card>());
+                deck.Remove(deck[j]);
+
+                cardDealerAnim.AnimateCardDeal(cardObj, placeholderPlayerHands[i].transform.position + Vector3.right * cardSpacing * j);
+
+                yield return new WaitForSeconds(1f);
+            }
+        }
+
+        drawPlayerCardsButton.SetActive(false);
     }
 
 }
