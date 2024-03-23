@@ -3,34 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class DeckManager : MonoBehaviour
 {
     public List<CardData> deck;
-
     public GameObject cardPrefab;
     public List<CardData> listOfCards;
 
     public float dealDuration = 1f;
     public int cardSpacing = 80;
 
-    #region placeholders variables
-
+    [Header("Placeholders Variables")]
     public GameObject placeholderBoard;
     public GameObject placeholderHand;
-
     public GameObject[] placeholderPlayerHands;
+    public GameObject drawPlayerCardsButton;
 
-    #endregion
 
     public List<Card> boardCards;
     public List<Card>[] playerCards = new List<Card>[4];
 
-    public GameObject drawPlayerCardsButton;
 
     private GameObject cardObj;
     private int numHand = 1;
     private int numCardsBoard = 0;
-
     private CardDealerAnimation cardDealerAnim;
 
 
@@ -54,15 +50,13 @@ public class DeckManager : MonoBehaviour
         StartCoroutine(DrawFlopCardsCoroutine());
     }
 
-
     private IEnumerator DrawFlopCardsCoroutine()
     {
         if (numCardsBoard < 3) //if there's less than 3 we haven't started yet, so we draw "The Flop", 3 cards on the board
         {
             for (int i = 0; i < 3; i++)
             {
-                var cardObj = InstantiateCard(deck[i], transform.position, placeholderBoard.transform, i);
-                //num_hand++;
+                var cardObj = CreateCardObject(deck[i], transform.position, placeholderBoard.transform, i);
                 boardCards.Add(cardObj.GetComponent<Card>());
                 deck.Remove(deck[i]);
                 numCardsBoard++;
@@ -74,7 +68,7 @@ public class DeckManager : MonoBehaviour
         }
         else if (numCardsBoard < 5) //We drew the flop already and we need to draw two other cards on the board
         {
-            var cardObj = InstantiateCard(deck[0], transform.position, placeholderBoard.transform, numCardsBoard++);
+            var cardObj = CreateCardObject(deck[0], transform.position, placeholderBoard.transform, numCardsBoard++);
 
             boardCards.Add(cardObj.GetComponent<Card>());
             deck.Remove(deck[0]);
@@ -92,21 +86,7 @@ public class DeckManager : MonoBehaviour
         if (playerCards[0].Count == 0)
         {
             StartCoroutine(DrawPlayerCardsCoroutine());
-        } 
-    }
-
-
-    // Instantiates a card 
-    private GameObject InstantiateCard(CardData data, Vector3 pos, Transform parent, int numCard)
-    {
-        cardObj = Instantiate(cardPrefab, new Vector3(pos.x + (cardSpacing * numCard), pos.y, 0), Quaternion.identity, parent);
-
-        cardObj.GetComponent<Card>().cardValue = data.cardValue;
-        cardObj.GetComponent<Card>().cardColor = data.cardColor;
-        cardObj.name = $"{data.cardValue} {data.cardColor}";
-        cardObj.transform.GetChild(1).GetComponent<Image>().sprite = data.cardSprite;
-
-        return cardObj;
+        }
     }
 
     IEnumerator DrawPlayerCardsCoroutine()
@@ -116,7 +96,18 @@ public class DeckManager : MonoBehaviour
         {
             for (int i = 0; i < 4; i++) //Number of people
             {
-                var cardObj = InstantiateCard(deck[j], transform.position, placeholderPlayerHands[i].transform, j);
+                GameObject cardObj;
+                if(i == 0)
+                {
+                    cardObj = CreateCardObject(deck[j], transform.position, placeholderPlayerHands[i].transform, j);
+                    cardObj.GetComponent<Card>().UpdateCardVisual(true);
+                }
+                else
+                {
+                    cardObj = CreateCardObject(deck[j], transform.position, placeholderPlayerHands[i].transform, j);
+                    cardObj.GetComponent<Card>().UpdateCardVisual(false);
+                }
+                
                 playerCards[i].Add(cardObj.GetComponent<Card>());
                 deck.Remove(deck[j]);
 
@@ -125,6 +116,20 @@ public class DeckManager : MonoBehaviour
                 yield return new WaitForSeconds(dealDuration);
             }
         }
+    }
+
+
+    // Instantiates a card 
+    private GameObject CreateCardObject(CardData data, Vector3 pos, Transform parent, int numCard)
+    {
+        cardObj = Instantiate(cardPrefab, new Vector3(pos.x + (cardSpacing * numCard), pos.y, 0), Quaternion.identity, parent);
+
+        cardObj.GetComponent<Card>().cardValue = data.cardValue;
+        cardObj.GetComponent<Card>().cardColor = data.cardColor;
+        cardObj.name = $"{data.cardValue} {data.cardColor}";
+        cardObj.transform.GetChild(1).GetComponent<Image>().sprite = data.cardSprite;
+
+        return cardObj;
     }
 
 }
