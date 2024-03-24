@@ -225,7 +225,7 @@ namespace Database
       }
       else
       {
-        var registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        Task<AuthResult> registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
 
         yield return new WaitUntil(() => registerTask.IsCompleted);
 
