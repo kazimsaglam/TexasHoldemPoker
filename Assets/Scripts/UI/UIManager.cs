@@ -5,13 +5,16 @@ namespace UI
 {
   public class UIManager : MonoBehaviour
   {
-    public static UIManager Instance;
+    public static UIManager instance;
 
     [SerializeField]
     private GameObject logInPanel;
 
     [SerializeField]
     private GameObject signUpPanel;
+
+    [SerializeField]
+    private GameObject dataUpdatePanel;
 
     private void Awake()
     {
@@ -20,9 +23,9 @@ namespace UI
 
     private void CreateInstance()
     {
-      if (Instance == null)
+      if (instance == null)
       {
-        Instance = this;
+        instance = this;
       }
     }
 
@@ -31,6 +34,14 @@ namespace UI
       logInPanel.SetActive(true);
       signUpPanel.SetActive(false);
     }
+
+    public void OpenUpdatePanel()
+    {
+      logInPanel.SetActive(false);
+      signUpPanel.SetActive(false);
+      dataUpdatePanel.SetActive(true);
+    }
+
 
     public void OpenSignUpPanel()
     {
