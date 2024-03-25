@@ -9,6 +9,7 @@ using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Database
 {
@@ -30,7 +31,6 @@ namespace Database
 
     public TMP_InputField passwordLoginField;
 
-    // Registration Variables
     [Space]
     [Header("Registration")]
     public TMP_InputField nameRegisterField;
@@ -38,8 +38,8 @@ namespace Database
     public TMP_InputField emailRegisterField;
     public TMP_InputField passwordRegisterField;
     public TMP_InputField confirmPasswordRegisterField;
+    public int defaultMoney;
 
-    //User Data variables
     [Header("UserData")]
     public TMP_InputField xpField;
 
@@ -102,7 +102,6 @@ namespace Database
     {
       if (user != null)
       {
-        References.userName = user.DisplayName;
         UIManager.instance.OpenUpdatePanel();
         // SceneManager.LoadScene("Scenes/GameScene");
       }
@@ -308,11 +307,26 @@ namespace Database
           }
           else
           {
+            string userId = user.UserId;
+            WriteUserData(userId, fullName, defaultMoney);
             Debug.Log("Registered Successfully. Welcome " + user.DisplayName);
             UIManager.instance.OpenLoginPanel();
           }
         }
       }
+    }
+
+    private void WriteUserData(string userId, string fullName, int money)
+    {
+      PlayerData playerData = new PlayerData
+      {
+        playerName = fullName,
+        money = money,
+        id = userId
+      };
+
+      string json = JsonUtility.ToJson(playerData);
+      databaseReference.Child("leaderboard").Child(userId).SetRawJsonValueAsync(json);
     }
 
     public void SaveDataButton()
@@ -358,12 +372,13 @@ namespace Database
         //Kills are now updated
       }
     }
+
     public void LoadDataButton()
     {
       // StartCoroutine(UpdateMoney());
-       StartCoroutine(LoadUserData());
-      
+      StartCoroutine(LoadUserData());
     }
+
     private IEnumerator LoadUserData()
     {
       Task<DataSnapshot> databaseTask = databaseReference.Child("userData")
@@ -399,7 +414,9 @@ namespace Database
         Task setValueTask = databaseReference.Child("userData").Child(auth.CurrentUser.UserId)
           .Child("money").SetValueAsync(newMoney);
 
-        setValueTask.ContinueWithOnMainThread(task =>
+        Task updateLeaderboardTask = databaseReference.Child("leaderboard").Child(auth.CurrentUser.UserId).SetValueAsync(newMoney);
+
+        Task.WhenAll(setValueTask, updateLeaderboardTask).ContinueWithOnMainThread(task =>
         {
           if (task.IsFaulted || task.IsCanceled)
           {
@@ -414,5 +431,13 @@ namespace Database
         });
       }
     }
+  }
+
+  [System.Serializable]
+  public class PlayerData
+  {
+    public string playerName;
+    public int money;
+    public string id;
   }
 }

@@ -20,7 +20,7 @@ namespace Game
 
     private void ShowWelcomeMessage()
     {
-      welcomeText.text = $"Welcome to the Game Scene, {References.userName}";
+      welcomeText.text = $"Welcome to the Game Scene, {FirebaseAuthManager.user.DisplayName}";
     }
 
     private void UpdateMoney(int newMoneyValue)
