@@ -15,17 +15,13 @@ public class DeckManager : MonoBehaviour
 
     [Header("Placeholders Variables")]
     public GameObject placeholderBoard;
-    public GameObject placeholderHand;
     public GameObject[] placeholderPlayerHands;
-    public GameObject drawPlayerCardsButton;
 
 
     public List<Card> boardCards;
-    public List<Card>[] playerCards = new List<Card>[4];
 
 
     private GameObject cardObj;
-    private int numHand = 1;
     private int numCardsBoard = 0;
     private CardDealerAnimation cardDealerAnim;
 
@@ -34,23 +30,18 @@ public class DeckManager : MonoBehaviour
     {
         cardDealerAnim = GetComponent<CardDealerAnimation>();
 
-        for (int i = 0; i < playerCards.Length; i++)
-        {
-            playerCards[i] = new List<Card>();
-        }
-
         deck = listOfCards;
         deck.Shuffle();
     }
 
 
     // Button to draw the 3 first cards. Any consecutive call will draw one card till there are 5
-    public void DrawFlopCards()
+    public void DealBoardCards()
     {
-        StartCoroutine(DrawFlopCardsCoroutine());
+        StartCoroutine(DealBoardCardsCoroutine());
     }
 
-    private IEnumerator DrawFlopCardsCoroutine()
+    private IEnumerator DealBoardCardsCoroutine()
     {
         if (numCardsBoard < 3) //if there's less than 3 we haven't started yet, so we draw "The Flop", 3 cards on the board
         {
@@ -61,7 +52,7 @@ public class DeckManager : MonoBehaviour
                 deck.Remove(deck[i]);
                 numCardsBoard++;
 
-                cardDealerAnim.AnimateCardDeal(cardObj, placeholderBoard.transform.position + Vector3.right * cardSpacing * i);
+                AnimateCardDeal(cardObj, placeholderBoard.transform.position + Vector3.right * cardSpacing * i);
 
                 yield return new WaitForSeconds(dealDuration);
             }
@@ -73,25 +64,21 @@ public class DeckManager : MonoBehaviour
             boardCards.Add(cardObj.GetComponent<Card>());
             deck.Remove(deck[0]);
 
-            cardDealerAnim.AnimateCardDeal(cardObj, placeholderBoard.transform.position + Vector3.right * cardSpacing * (numCardsBoard - 1));
+            AnimateCardDeal(cardObj, placeholderBoard.transform.position + Vector3.right * cardSpacing * (numCardsBoard - 1));
 
             yield return new WaitForSeconds(dealDuration);
         }
     }
 
 
-    /// Draws 2 card per player for 4 players.
-    public void DrawPlayerHands()
+    /// Draws 2 card per player for 4 playersAndBots.
+    public void DealPlayerHands()
     {
-        if (playerCards[0].Count == 0)
-        {
-            StartCoroutine(DrawPlayerCardsCoroutine());
-        }
+        StartCoroutine(DealPlayerCardsCoroutine());
     }
 
-    IEnumerator DrawPlayerCardsCoroutine()
+    IEnumerator DealPlayerCardsCoroutine()
     {
-        drawPlayerCardsButton.SetActive(false);
         for (int j = 0; j < 2; j++) //Number of cards to be drawn
         {
             for (int i = 0; i < 4; i++) //Number of people
@@ -99,19 +86,19 @@ public class DeckManager : MonoBehaviour
                 GameObject cardObj;
                 if(i == 0)
                 {
-                    cardObj = CreateCardObject(deck[j], transform.position, placeholderPlayerHands[i].transform, j);
+                    cardObj = CreateCardObject(deck[j], transform.position, GameController.instance.playersAndBots[i].transform, j);
                     cardObj.GetComponent<Card>().UpdateCardVisual(true);
                 }
                 else
                 {
-                    cardObj = CreateCardObject(deck[j], transform.position, placeholderPlayerHands[i].transform, j);
+                    cardObj = CreateCardObject(deck[j], transform.position, GameController.instance.playersAndBots[i].transform, j);
                     cardObj.GetComponent<Card>().UpdateCardVisual(false);
                 }
-                
-                playerCards[i].Add(cardObj.GetComponent<Card>());
+
+                GameController.instance.playersAndBots[i].GetComponent<Player>().hand.Add(cardObj.GetComponent<Card>());
                 deck.Remove(deck[j]);
 
-                cardDealerAnim.AnimateCardDeal(cardObj, placeholderPlayerHands[i].transform.position + Vector3.right * cardSpacing * j);
+                AnimateCardDeal(cardObj, placeholderPlayerHands[i].transform.position + Vector3.right * cardSpacing * j);
 
                 yield return new WaitForSeconds(dealDuration);
             }
@@ -130,6 +117,11 @@ public class DeckManager : MonoBehaviour
         cardObj.transform.GetChild(1).GetComponent<Image>().sprite = data.cardSprite;
 
         return cardObj;
+    }
+
+    private void AnimateCardDeal(GameObject cardObj, Vector3 targetPosition)
+    {
+        cardDealerAnim.AnimateCardDeal(cardObj, targetPosition);
     }
 
 }
