@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
+using Database;
 using Firebase.Database;
 using Firebase.Extensions;
 using UI;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace Database
+namespace MainMenu
 {
   public class LeaderboardManager : MonoBehaviour
   {
@@ -35,7 +34,7 @@ namespace Database
           else if (task.IsCompleted)
           {
             DataSnapshot snapshot = task.Result;
-            List<PlayerData> leaderboardData = new List<PlayerData>();
+            List<LeaderboardData> leaderboardData = new List<LeaderboardData>();
 
             foreach (DataSnapshot childSnapshot in snapshot.Children)
             {
@@ -43,7 +42,7 @@ namespace Database
               string fullName = childSnapshot.Child("playerName").Value.ToString();
               int money = int.Parse(childSnapshot.Child("money").Value.ToString());
 
-              leaderboardData.Add(new PlayerData
+              leaderboardData.Add(new LeaderboardData
               {
                 playerName = fullName,
                 money = money, id = userId
@@ -52,7 +51,7 @@ namespace Database
 
             leaderboardData.Reverse();
             int degree = 1;
-            foreach (PlayerData playerData in leaderboardData)
+            foreach (LeaderboardData playerData in leaderboardData)
             {
               GameObject instantiatedObject = Instantiate(rowSlot, container);
               LeaderboardRow leaderboardRow = instantiatedObject.GetComponent<LeaderboardRow>();
@@ -61,8 +60,6 @@ namespace Database
               leaderboardRow.SetMoneyText(playerData.money.ToString());
               leaderboardRow.SetDegreeText(degree.ToString());
               degree++;
-
-              Debug.Log($"User: {playerData.playerName}, Money: {playerData.money}");
             }
           }
         });

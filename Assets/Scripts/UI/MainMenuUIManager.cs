@@ -46,6 +46,8 @@ namespace UI
 
     public void OpenProfilePanel()
     {
+      mainMenuPanel.SetActive(false);
+      profilePanel.SetActive(true);
     }
 
     public void OnOpenLeaderboardPanel()

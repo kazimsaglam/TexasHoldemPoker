@@ -9,6 +9,7 @@ using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Database
 {
@@ -36,10 +37,16 @@ namespace Database
     public TMP_InputField passwordRegisterField;
     public TMP_InputField confirmPasswordRegisterField;
     public int defaultMoney;
+    public int win;
+    public int totalGameCount;
 
     public delegate void MoneyUpdateHandler(int newMoney);
 
     public static event MoneyUpdateHandler OnMoneyUpdate;
+
+    public delegate void WinUpdateHandler(int win);
+
+    public static event WinUpdateHandler OnWinUpdate;
     public static FirebaseAuthManager Instance { get; private set; }
 
     private void Start()
@@ -102,7 +109,7 @@ namespace Database
       }
     }
 
-    void InitializeFirebase()
+    private void InitializeFirebase()
     {
       _auth = FirebaseAuth.DefaultInstance;
       _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
@@ -111,7 +118,7 @@ namespace Database
       AuthStateChanged(this, null);
     }
 
-    void AuthStateChanged(object sender, EventArgs eventArgs)
+    private void AuthStateChanged(object sender, EventArgs eventArgs)
     {
       if (_auth.CurrentUser != _user)
       {
@@ -226,7 +233,7 @@ namespace Database
     }
 
     private IEnumerator RegisterAsync(string fullName, string email, string password,
-      string confirmPassword)
+      string confirmationPassword)
     {
       if (fullName == "")
       {
@@ -236,7 +243,7 @@ namespace Database
       {
         Debug.LogError("Email field is empty");
       }
-      else if (password != confirmPassword)
+      else if (password != confirmationPassword)
       {
         Debug.LogError("Password does not match");
       }
@@ -284,6 +291,7 @@ namespace Database
           {
             string userId = _user.UserId;
             WriteLeaderboardData(userId, fullName, defaultMoney);
+            WriteUserData(userId, fullName, defaultMoney, win, totalGameCount);
             Debug.Log("Registered Successfully. Welcome " + _user.DisplayName);
             WelcomeUIManager.instance.OpenLoginPanel();
           }
@@ -291,16 +299,31 @@ namespace Database
       }
     }
 
+    private void WriteUserData(string userId, string fullName, int money, int wins, int totalCount)
+    {
+      UserData userData = new UserData()
+      {
+        playerName = fullName,
+        money = money,
+        id = userId,
+        win = wins,
+        totalGameCount = totalCount
+      };
+
+      string json = JsonUtility.ToJson(userData);
+      _databaseReference.Child("userData").Child(userId).SetRawJsonValueAsync(json);
+    }
+
     private void WriteLeaderboardData(string userId, string fullName, int money)
     {
-      PlayerData playerData = new PlayerData
+      LeaderboardData leaderboardData = new LeaderboardData
       {
         playerName = fullName,
         money = money,
         id = userId
       };
 
-      string json = JsonUtility.ToJson(playerData);
+      string json = JsonUtility.ToJson(leaderboardData);
       _databaseReference.Child("leaderboard").Child(userId).SetRawJsonValueAsync(json);
     }
 
@@ -320,6 +343,54 @@ namespace Database
         else
         {
           return "Money data not found for the current user";
+        }
+      }
+      else
+      {
+        return "User not authenticated";
+      }
+    }
+
+    public async Task<string> GetWins()
+    {
+      if (_auth.CurrentUser != null)
+      {
+        string userId = _auth.CurrentUser.UserId;
+
+        DataSnapshot snapshot = await _databaseReference.Child("userData")
+          .Child(userId).Child("win").GetValueAsync();
+
+        if (snapshot.Exists)
+        {
+          return snapshot.Value.ToString();
+        }
+        else
+        {
+          return "Win data not found for the current user";
+        }
+      }
+      else
+      {
+        return "User not authenticated";
+      }
+    }
+
+    public async Task<string> GetWinOrTotalGameCount(string state)
+    {
+      if (_auth.CurrentUser != null)
+      {
+        string userId = _auth.CurrentUser.UserId;
+
+        DataSnapshot snapshot = await _databaseReference.Child("userData")
+          .Child(userId).Child(state).GetValueAsync();
+
+        if (snapshot.Exists)
+        {
+          return snapshot.Value.ToString();
+        }
+        else
+        {
+          return "Lose data not found for the current user";
         }
       }
       else
@@ -356,7 +427,17 @@ namespace Database
   }
 
   [Serializable]
-  public class PlayerData
+  public class UserData
+  {
+    public string playerName;
+    public int money;
+    public string id;
+    public int win;
+    public int totalGameCount;
+  }
+
+  [Serializable]
+  public class LeaderboardData
   {
     public string playerName;
     public int money;
