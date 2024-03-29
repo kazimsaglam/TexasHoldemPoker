@@ -9,22 +9,19 @@ using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Database
 {
   public class FirebaseAuthManager : MonoBehaviour
   {
-    // Firebase variable
     [Header("Firebase")]
     public DependencyStatus dependencyStatus;
 
-    public static FirebaseAuth auth;
-    public static FirebaseUser user;
+    private FirebaseAuth _auth;
+    private FirebaseUser _user;
 
-    public DatabaseReference databaseReference;
+    private DatabaseReference _databaseReference;
 
-    // Login Variables
     [Space]
     [Header("Login")]
     public TMP_InputField emailLoginField;
@@ -39,11 +36,6 @@ namespace Database
     public TMP_InputField passwordRegisterField;
     public TMP_InputField confirmPasswordRegisterField;
     public int defaultMoney;
-
-    [Header("UserData")]
-    public TMP_InputField xpField;
-
-    public TMP_InputField killsField;
 
     public delegate void MoneyUpdateHandler(int newMoney);
 
@@ -86,66 +78,65 @@ namespace Database
 
     private IEnumerator CheckForAutoLogin()
     {
-      if (user != null)
+      if (_user != null)
       {
-        Task reloadUserTask = user.ReloadAsync();
+        Task reloadUserTask = _user.ReloadAsync();
         yield return new WaitUntil(() => reloadUserTask.IsCompleted);
         AutoLogin();
       }
       else
       {
-        UIManager.instance.OpenLoginPanel();
+        WelcomeUIManager.instance.OpenLoginPanel();
       }
     }
 
     private void AutoLogin()
     {
-      if (user != null)
+      if (_user != null)
       {
-        UIManager.instance.OpenUpdatePanel();
-        // SceneManager.LoadScene("Scenes/GameScene");
+        SceneManager.LoadScene("Scenes/MainMenuScene");
       }
       else
       {
-        UIManager.instance.OpenLoginPanel();
+        WelcomeUIManager.instance.OpenLoginPanel();
       }
     }
 
     void InitializeFirebase()
     {
-      auth = FirebaseAuth.DefaultInstance;
-      databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+      _auth = FirebaseAuth.DefaultInstance;
+      _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
 
-      auth.StateChanged += AuthStateChanged;
+      _auth.StateChanged += AuthStateChanged;
       AuthStateChanged(this, null);
     }
 
-    void AuthStateChanged(object sender, System.EventArgs eventArgs)
+    void AuthStateChanged(object sender, EventArgs eventArgs)
     {
-      if (auth.CurrentUser != user)
+      if (_auth.CurrentUser != _user)
       {
-        bool signedIn = user != auth.CurrentUser && auth.CurrentUser != null;
+        bool signedIn = _user != _auth.CurrentUser && _auth.CurrentUser != null;
 
-        if (!signedIn && user != null)
+        if (!signedIn && _user != null)
         {
-          Debug.Log("Signed out " + user.UserId);
-          SceneManager.LoadScene("Scenes/SampleScene");
+          Debug.Log("Signed out " + _user.UserId);
+          SceneManager.LoadScene("Scenes/WelcomeScene");
         }
 
-        user = auth.CurrentUser;
+        _user = _auth.CurrentUser;
 
         if (signedIn)
         {
-          Debug.Log("Signed in " + user.UserId);
+          Debug.Log("Signed in " + _user.UserId);
         }
       }
     }
 
-    public static void OnLogOut()
+    public void OnLogOut()
     {
-      if (auth != null && user != null)
+      if (_auth != null && _user != null)
       {
-        auth.SignOut();
+        _auth.SignOut();
       }
     }
 
@@ -156,7 +147,7 @@ namespace Database
 
     private IEnumerator LoginAsync(string email, string password)
     {
-      Task<AuthResult> loginTask = auth.SignInWithEmailAndPasswordAsync(email, password);
+      Task<AuthResult> loginTask = _auth.SignInWithEmailAndPasswordAsync(email, password);
 
       yield return new WaitUntil(() => loginTask.IsCompleted);
 
@@ -164,8 +155,10 @@ namespace Database
       {
         Debug.LogError(loginTask.Exception);
 
-        FirebaseException firebaseException = loginTask.Exception.GetBaseException() as FirebaseException;
-        System.Diagnostics.Debug.Assert(firebaseException != null, nameof(firebaseException) + " != null");
+        FirebaseException firebaseException = loginTask.Exception.GetBaseException()
+          as FirebaseException;
+        System.Diagnostics.Debug.Assert(firebaseException != null,
+          nameof(firebaseException) + " != null");
         AuthError authError = (AuthError)firebaseException.ErrorCode;
 
 
@@ -194,10 +187,10 @@ namespace Database
       }
       else
       {
-        user = loginTask.Result.User;
+        _user = loginTask.Result.User;
 
-        Debug.LogFormat("{0} You Are Successfully Logged In", user.DisplayName);
-        SceneManager.LoadScene("Scenes/GameScene");
+        Debug.LogFormat("{0} You Are Successfully Logged In", _user.DisplayName);
+        SceneManager.LoadScene("Scenes/MainMenuScene");
       }
     }
 
@@ -205,6 +198,31 @@ namespace Database
     {
       StartCoroutine(RegisterAsync(nameRegisterField.text, emailRegisterField.text,
         passwordRegisterField.text, confirmPasswordRegisterField.text));
+    }
+
+    private void CheckState(AuthError authError)
+    {
+      string failedMessage = " Process is Failed! Because ";
+      switch (authError)
+      {
+        case AuthError.InvalidEmail:
+          failedMessage += "email is invalid";
+          break;
+        case AuthError.WrongPassword:
+          failedMessage += "wrong Password";
+          break;
+        case AuthError.MissingEmail:
+          failedMessage += "email is missing";
+          break;
+        case AuthError.MissingPassword:
+          failedMessage += "password is missing";
+          break;
+        default:
+          failedMessage = "registration is failed";
+          break;
+      }
+
+      Debug.Log(failedMessage);
     }
 
     private IEnumerator RegisterAsync(string fullName, string email, string password,
@@ -218,13 +236,13 @@ namespace Database
       {
         Debug.LogError("Email field is empty");
       }
-      else if (passwordRegisterField.text != confirmPasswordRegisterField.text)
+      else if (password != confirmPassword)
       {
         Debug.LogError("Password does not match");
       }
       else
       {
-        Task<AuthResult> registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        Task<AuthResult> registerTask = _auth.CreateUserWithEmailAndPasswordAsync(email, password);
 
         yield return new WaitUntil(() => registerTask.IsCompleted);
 
@@ -237,42 +255,21 @@ namespace Database
           System.Diagnostics.Debug.Assert(firebaseException != null,
             nameof(firebaseException) + " != null");
           AuthError authError = (AuthError)firebaseException.ErrorCode;
-
-          string failedMessage = "Registration Failed! Because ";
-          switch (authError)
-          {
-            case AuthError.InvalidEmail:
-              failedMessage += "email is invalid";
-              break;
-            case AuthError.WrongPassword:
-              failedMessage += "wrong Password";
-              break;
-            case AuthError.MissingEmail:
-              failedMessage += "email is missing";
-              break;
-            case AuthError.MissingPassword:
-              failedMessage += "password is missing";
-              break;
-            default:
-              failedMessage = "registration is failed";
-              break;
-          }
-
-          Debug.Log(failedMessage);
+          CheckState(authError);
         }
         else
         {
-          user = registerTask.Result.User;
+          _user = registerTask.Result.User;
 
           UserProfile userProfile = new UserProfile {DisplayName = fullName};
 
-          Task updateProfileTask = user.UpdateUserProfileAsync(userProfile);
+          Task updateProfileTask = _user.UpdateUserProfileAsync(userProfile);
 
           yield return new WaitUntil(() => updateProfileTask.IsCompleted);
 
           if (updateProfileTask.Exception != null)
           {
-            user.DeleteAsync();
+            _user.DeleteAsync();
 
             Debug.LogError(updateProfileTask.Exception);
 
@@ -281,42 +278,20 @@ namespace Database
             System.Diagnostics.Debug.Assert(firebaseException != null,
               nameof(firebaseException) + " != null");
             AuthError authError = (AuthError)firebaseException.ErrorCode;
-
-
-            string failMessage = "Profile update Failed! Because ";
-            switch (authError)
-            {
-              case AuthError.InvalidEmail:
-                failMessage += "email is invalid";
-                break;
-              case AuthError.WrongPassword:
-                failMessage += "wrong Password";
-                break;
-              case AuthError.MissingEmail:
-                failMessage += "email is missing";
-                break;
-              case AuthError.MissingPassword:
-                failMessage += "password is missing";
-                break;
-              default:
-                failMessage = "profile update Failed";
-                break;
-            }
-
-            Debug.Log(failMessage);
+            CheckState(authError);
           }
           else
           {
-            string userId = user.UserId;
-            WriteUserData(userId, fullName, defaultMoney);
-            Debug.Log("Registered Successfully. Welcome " + user.DisplayName);
-            UIManager.instance.OpenLoginPanel();
+            string userId = _user.UserId;
+            WriteLeaderboardData(userId, fullName, defaultMoney);
+            Debug.Log("Registered Successfully. Welcome " + _user.DisplayName);
+            WelcomeUIManager.instance.OpenLoginPanel();
           }
         }
       }
     }
 
-    private void WriteUserData(string userId, string fullName, int money)
+    private void WriteLeaderboardData(string userId, string fullName, int money)
     {
       PlayerData playerData = new PlayerData
       {
@@ -326,95 +301,42 @@ namespace Database
       };
 
       string json = JsonUtility.ToJson(playerData);
-      databaseReference.Child("leaderboard").Child(userId).SetRawJsonValueAsync(json);
+      _databaseReference.Child("leaderboard").Child(userId).SetRawJsonValueAsync(json);
     }
 
-    public void SaveDataButton()
+    public async Task<string> GetMoney()
     {
-      StartCoroutine(UpdateXp(int.Parse(xpField.text)));
-      StartCoroutine(UpdateKills(int.Parse(killsField.text)));
-      SceneManager.LoadScene("Scenes/GameScene");
-      // StartCoroutine(UpdateMoney());
-    }
-
-    private IEnumerator UpdateXp(int _xp)
-    {
-      //Set the currently logged in user xp
-      Task DBTask = databaseReference.Child("userData").Child(user.UserId).Child("xp").SetValueAsync(_xp);
-
-      yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
-
-      if (DBTask.Exception != null)
+      if (_auth.CurrentUser != null)
       {
-        Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        string userId = _auth.CurrentUser.UserId;
+
+        DataSnapshot snapshot = await _databaseReference.Child("userData")
+          .Child(userId).Child("money").GetValueAsync();
+
+        if (snapshot.Exists)
+        {
+          return snapshot.Value.ToString();
+        }
+        else
+        {
+          return "Money data not found for the current user";
+        }
       }
       else
       {
-        //Xp is now updated
+        return "User not authenticated";
       }
     }
-
-    public IEnumerator UpdateKills(int kills)
-    {
-      //Set the currently logged in user kills
-      Task databaseTask = databaseReference.Child("userData").Child(user.UserId)
-        .Child("kills").SetValueAsync(kills);
-
-      yield return new WaitUntil(predicate: () => databaseTask.IsCompleted);
-
-      if (databaseTask.Exception != null)
-      {
-        Debug.LogWarning(message: $"Failed to register task with {databaseTask.Exception}");
-      }
-      else
-      {
-        Debug.Log("Kills are updated");
-        //Kills are now updated
-      }
-    }
-
-    public void LoadDataButton()
-    {
-      // StartCoroutine(UpdateMoney());
-      StartCoroutine(LoadUserData());
-    }
-
-    private IEnumerator LoadUserData()
-    {
-      Task<DataSnapshot> databaseTask = databaseReference.Child("userData")
-        .Child(user.UserId).GetValueAsync();
-
-      yield return new WaitUntil(predicate: () => databaseTask.IsCompleted);
-
-      if (databaseTask.Exception != null)
-      {
-        Debug.LogWarning(message: $"Failed to register task with {databaseTask.Exception}");
-      }
-      else if (databaseTask.Result.Value == null)
-      {
-        //No data exists yet
-        xpField.text = "0";
-        killsField.text = "0";
-      }
-      else
-      {
-        //Data has been retrieved
-        DataSnapshot snapshot = databaseTask.Result;
-
-        xpField.text = snapshot.Child("xp").Value.ToString();
-        killsField.text = snapshot.Child("kills").Value.ToString();
-      }
-    }
-
 
     public void UpdateMoney(int newMoney)
     {
-      if (databaseReference != null)
+      if (_databaseReference != null)
       {
-        Task setValueTask = databaseReference.Child("userData").Child(auth.CurrentUser.UserId)
+        Task setValueTask = _databaseReference.Child("userData").Child(_auth.CurrentUser.UserId)
           .Child("money").SetValueAsync(newMoney);
 
-        Task updateLeaderboardTask = databaseReference.Child("leaderboard").Child(auth.CurrentUser.UserId).SetValueAsync(newMoney);
+        Task updateLeaderboardTask = _databaseReference.Child("leaderboard")
+          .Child(_auth.CurrentUser.UserId).SetValueAsync(newMoney);
 
         Task.WhenAll(setValueTask, updateLeaderboardTask).ContinueWithOnMainThread(task =>
         {
@@ -433,7 +355,7 @@ namespace Database
     }
   }
 
-  [System.Serializable]
+  [Serializable]
   public class PlayerData
   {
     public string playerName;

@@ -1,18 +1,27 @@
 ﻿using System.Collections.Generic;
 using Firebase.Database;
 using Firebase.Extensions;
+using UI;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Database
 {
   public class LeaderboardManager : MonoBehaviour
   {
     public DatabaseReference databaseReference;
+    public Transform container;
+
+    [SerializeField]
+    public GameObject rowSlot;
 
     private void Start()
     {
       databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+      FetchLeaderboard();
     }
+
 
     public void FetchLeaderboard()
     {
@@ -42,9 +51,17 @@ namespace Database
             }
 
             leaderboardData.Reverse();
-
+            int degree = 1;
             foreach (PlayerData playerData in leaderboardData)
             {
+              GameObject instantiatedObject = Instantiate(rowSlot, container);
+              LeaderboardRow leaderboardRow = instantiatedObject.GetComponent<LeaderboardRow>();
+
+              leaderboardRow.SetNameText(playerData.playerName);
+              leaderboardRow.SetMoneyText(playerData.money.ToString());
+              leaderboardRow.SetDegreeText(degree.ToString());
+              degree++;
+
               Debug.Log($"User: {playerData.playerName}, Money: {playerData.money}");
             }
           }

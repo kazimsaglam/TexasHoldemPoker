@@ -3,18 +3,15 @@ using UnityEngine;
 
 namespace UI
 {
-  public class UIManager : MonoBehaviour
+  public class WelcomeUIManager : MonoBehaviour
   {
-    public static UIManager instance;
+    public static WelcomeUIManager instance;
 
     [SerializeField]
     private GameObject logInPanel;
 
     [SerializeField]
     private GameObject signUpPanel;
-
-    [SerializeField]
-    private GameObject dataUpdatePanel;
 
     private void Awake()
     {
@@ -34,14 +31,6 @@ namespace UI
       logInPanel.SetActive(true);
       signUpPanel.SetActive(false);
     }
-
-    public void OpenUpdatePanel()
-    {
-      logInPanel.SetActive(false);
-      signUpPanel.SetActive(false);
-      dataUpdatePanel.SetActive(true);
-    }
-
 
     public void OpenSignUpPanel()
     {
