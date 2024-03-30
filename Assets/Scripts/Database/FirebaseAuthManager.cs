@@ -9,7 +9,6 @@ using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Database
 {
@@ -39,14 +38,6 @@ namespace Database
     public int defaultMoney;
     public int win;
     public int totalGameCount;
-
-    public delegate void MoneyUpdateHandler(int newMoney);
-
-    public static event MoneyUpdateHandler OnMoneyUpdate;
-
-    public delegate void WinUpdateHandler(int win);
-
-    public static event WinUpdateHandler OnWinUpdate;
     public static FirebaseAuthManager Instance { get; private set; }
 
     private void Start()
@@ -342,31 +333,7 @@ namespace Database
         }
         else
         {
-          return "Money data not found for the current user";
-        }
-      }
-      else
-      {
-        return "User not authenticated";
-      }
-    }
-
-    public async Task<string> GetWins()
-    {
-      if (_auth.CurrentUser != null)
-      {
-        string userId = _auth.CurrentUser.UserId;
-
-        DataSnapshot snapshot = await _databaseReference.Child("userData")
-          .Child(userId).Child("win").GetValueAsync();
-
-        if (snapshot.Exists)
-        {
-          return snapshot.Value.ToString();
-        }
-        else
-        {
-          return "Win data not found for the current user";
+          return "Data not found for the user";
         }
       }
       else
@@ -390,7 +357,7 @@ namespace Database
         }
         else
         {
-          return "Lose data not found for the current user";
+          return "Data not found for the user";
         }
       }
       else
@@ -413,13 +380,55 @@ namespace Database
         {
           if (task.IsFaulted || task.IsCanceled)
           {
-            Debug.LogError("Failed to update money in database");
+            Debug.LogError("Failed to update money");
           }
           else
           {
             Debug.Log("Money updated successfully");
+          }
+        });
+      }
+    }
 
-            OnMoneyUpdate?.Invoke(newMoney);
+    public void UpdateWinCount(int count)
+    {
+      if (_databaseReference != null)
+      {
+        Task setWinCountTask = _databaseReference.Child("userData").Child(_auth.CurrentUser.UserId)
+          .Child("win").SetValueAsync(count);
+
+
+        Task.WhenAll(setWinCountTask).ContinueWithOnMainThread(task =>
+        {
+          if (task.IsFaulted || task.IsCanceled)
+          {
+            Debug.LogError("Failed to update game and win count");
+          }
+          else
+          {
+            Debug.Log("Updated successfully");
+          }
+        });
+      }
+    }
+
+    public void UpdateGameCount(int count)
+    {
+      if (_databaseReference != null)
+      {
+        Task setGameCountTask = _databaseReference.Child("userData").Child(_auth.CurrentUser.UserId)
+          .Child("totalGameCount").SetValueAsync(count);
+
+
+        Task.WhenAll(setGameCountTask).ContinueWithOnMainThread(task =>
+        {
+          if (task.IsFaulted || task.IsCanceled)
+          {
+            Debug.LogError("Failed to update game and win count");
+          }
+          else
+          {
+            Debug.Log("Updated successfully");
           }
         });
       }

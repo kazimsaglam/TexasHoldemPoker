@@ -16,15 +16,30 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 686b47679fc927143a1cc3e6e5b658e8
-  m_SerializeEntries:
-  - m_GUID: e525286d112b6964da52b9dbd2b3bde8
-    m_Address: slot
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b86124ee2db51194a83511b62133c20e, type: 2}
   m_SchemaSet:
     m_Schemas:
     - {fileID: 11400000, guid: ec0878316ef6f304aafaaab19f41d851, type: 2}
     - {fileID: 11400000, guid: 98bae800934f7b64d8d1d4dc662cdc4f, type: 2}
+  m_FolderEntryCache: []
+  m_AssetCollectionEntryCache: []
+  <FlaggedDuringContentUpdateRestriction>k__BackingField: 0
+  m_CurrentHash:
+    bytes[0]: 142
+    bytes[1]: 165
+    bytes[2]: 240
+    bytes[3]: 156
+    bytes[4]: 27
+    bytes[5]: 135
+    bytes[6]: 10
+    bytes[7]: 163
+    bytes[8]: 182
+    bytes[9]: 114
+    bytes[10]: 63
+    bytes[11]: 92
+    bytes[12]: 183
+    bytes[13]: 236
+    bytes[14]: 177
+    bytes[15]: 194

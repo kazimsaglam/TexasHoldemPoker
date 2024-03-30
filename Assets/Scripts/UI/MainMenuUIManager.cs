@@ -2,6 +2,7 @@
 using Firebase.Database;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UI
 {
@@ -60,6 +61,11 @@ namespace UI
     {
       leaderboardPanel.SetActive(false);
       mainMenuPanel.SetActive(true);
+    }
+
+    public void OnOpenGameScene()
+    {
+      SceneManager.LoadScene("Scenes/GameScene");
     }
 
     public void OnSignOut()

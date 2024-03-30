@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace UI
+namespace MainMenu
 {
   public class LeaderboardRow : MonoBehaviour
   {

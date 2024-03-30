@@ -15,15 +15,37 @@ namespace MainMenu
     [SerializeField]
     private TextMeshProUGUI statisticsText;
 
+    public string totalGameCount { get; set; }
+    public string winCount { get; set; }
+
+    public static ProfilePageManager Instance { get; set; }
+
+    private void Awake()
+    {
+      if (Instance == null)
+      {
+        Instance = this;
+      }
+      else
+      {
+        Destroy(gameObject);
+      }
+    }
+
     private async void Start()
     {
-      string wins = await FirebaseAuthManager.Instance.GetWinOrTotalGameCount("win");
-      winText.text = wins;
-      string totalGameCount = await FirebaseAuthManager.Instance.GetWinOrTotalGameCount("totalGameCount");
+      totalGameCount = await FirebaseAuthManager.Instance
+        .GetWinOrTotalGameCount("totalGameCount");
       totalText.text = totalGameCount;
-      int winCount = int.Parse(wins);
+
+      winCount = await FirebaseAuthManager.Instance
+        .GetWinOrTotalGameCount("win");
+      winText.text = winCount;
+
+      int wins = int.Parse(winCount);
       int totalCount = int.Parse(totalGameCount);
-      float winStatistics = (float)winCount / totalCount * 100f;
+
+      float winStatistics = (float)wins / totalCount * 100f;
       string formattedWinStatistics = winStatistics.ToString("F2");
       statisticsText.text = formattedWinStatistics + "%";
       Debug.Log($"Win Statistics: {formattedWinStatistics}%");
