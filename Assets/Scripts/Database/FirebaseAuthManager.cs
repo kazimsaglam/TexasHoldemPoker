@@ -374,7 +374,7 @@ namespace Database
           .Child("money").SetValueAsync(newMoney);
 
         Task updateLeaderboardTask = _databaseReference.Child("leaderboard")
-          .Child(_auth.CurrentUser.UserId).SetValueAsync(newMoney);
+          .Child(_auth.CurrentUser.UserId).Child("money").SetValueAsync(newMoney);
 
         Task.WhenAll(setValueTask, updateLeaderboardTask).ContinueWithOnMainThread(task =>
         {
