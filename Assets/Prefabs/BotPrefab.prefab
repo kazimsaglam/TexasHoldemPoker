@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Bet: $0'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 638d22f5bda84d348add3f13900b3b90, type: 2}
+  m_sharedMaterial: {fileID: -143470130573435370, guid: 638d22f5bda84d348add3f13900b3b90, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 32
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -201,8 +201,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Money: $999999'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 638d22f5bda84d348add3f13900b3b90, type: 2}
+  m_sharedMaterial: {fileID: -143470130573435370, guid: 638d22f5bda84d348add3f13900b3b90, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -232,7 +232,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 32
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -320,10 +320,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerName: 
   money: 0
-  currentPlayerBet: 0
-  isFolded: 0
-  moneyText: {fileID: 4813516305584773292}
-  betText: {fileID: 8175698201381728829}
   hand: []
   handValue: 0
   handValueString: 
+  isFolded: 0
+  betAmount: 0
+  moneyText: {fileID: 4813516305584773292}
+  betText: {fileID: 8175698201381728829}
+  betRoundIndex: 0

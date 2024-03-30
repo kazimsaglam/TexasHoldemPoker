@@ -3,12 +3,6 @@ using UnityEngine;
 
 public class BotPlayer : Player
 {
-    public BotPlayer(string name, int startingMoney) : base(name, startingMoney)
-    {
-        playerName = name;
-        money = startingMoney;
-    }
-
     public void MakeDecision(int currentBet, int pot)
     {
         // Rastgele bir faktör ekleyin

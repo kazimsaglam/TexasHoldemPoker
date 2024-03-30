@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
 
 public class UIManager : MonoBehaviour
 {
@@ -52,7 +49,8 @@ public class UIManager : MonoBehaviour
 
     public void UpdatePot(int newPot)
     {
-        potText.text = $"Pot: ${newPot}";
+        GameController.instance.pot= newPot;
+        potText.text = $"Pot: ${GameController.instance.pot}";
     }
 
 
@@ -80,6 +78,8 @@ public class UIManager : MonoBehaviour
         // Bahsi kabul edin ve paradan düþürün
         mainPlayer.betAmount = currentBet;
         mainPlayer.money -= currentBet;
+
+        GameController.instance.AddToCurrentBet(currentBet);
 
         // UI'yi güncelleyin
         UpdatePlayerUI(mainPlayer);
@@ -131,7 +131,8 @@ public class UIManager : MonoBehaviour
         mainPlayer.money -= raiseAmount;
 
         // Mevcut bahsi güncelleyin
-        GameController.instance.currentBet = raiseAmount;
+        GameController.instance.AddToCurrentBet(raiseAmount);
+        UpdatePot(raiseAmount);
 
         // UI'yi güncelleyin
         UpdatePlayerUI(mainPlayer);
@@ -152,7 +153,8 @@ public class UIManager : MonoBehaviour
         mainPlayer.money -= raiseAmount;
 
         // Mevcut bahsi güncelleyin
-        GameController.instance.currentBet = raiseAmount;
+        GameController.instance.AddToCurrentBet(raiseAmount);
+        UpdatePot(raiseAmount);
 
         // UI'yi güncelleyin
         UpdatePlayerUI(mainPlayer);

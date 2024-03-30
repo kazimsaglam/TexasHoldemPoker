@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
 
 public enum GameState { PreFlop, Flop, Turn, River, Showdown }
 public class GameController : MonoBehaviour
@@ -19,13 +19,14 @@ public class GameController : MonoBehaviour
     public int currentBet;
     public int pot;
 
-    private int smallBlindAmount;
-    private int bigBlindAmount;
+    private int smallBlind;
+    private int bigBlind;
 
 
     private GameState gameState;
 
     private DeckManager deckManager;
+
 
 
     private void Awake()
@@ -46,49 +47,39 @@ public class GameController : MonoBehaviour
     void CreatePlayers()
     {
         playersAndBots = new List<Player>();
+        GameObject playerOrBot;
 
         for (int i = 0; i < numPlayers; i++)
         {
-            GameObject playerOrBot;
             if (i < 1) // create human player
             {
                 playerOrBot = Instantiate(playerPrefab, deckManager.placeholderPlayerHands[i].transform.position, Quaternion.identity, deckManager.placeholderPlayerHands[i].transform);
-                playerOrBot.name = $"Player {i + 1}";
                 Player player = playerOrBot.GetComponent<Player>();
-                player.money = 1000;
-                player.playerName = "Oyuncu Fatihi";
-                //player.SetName("Player " + i);
-                //player.SetMoney(startingMoney);
+                player.SetPlayer($"Player {i + 1}", 1000);
                 playersAndBots.Add(player);
             }
             else // create AI bot
             {
                 playerOrBot = Instantiate(botPrefab, deckManager.placeholderPlayerHands[i].transform.position, Quaternion.identity, deckManager.placeholderPlayerHands[i].transform);
-                playerOrBot.name = $"Bot {(i)}";
                 Player bot = playerOrBot.GetComponent<BotPlayer>();
-                bot.money = 500;
-                //bot.SetName("Bot " + (i - 1));
-                //bot.SetMoney(startingMoney);
+                bot.SetPlayer($"Bot {(i)}", 500);
                 playersAndBots.Add(bot);
             }
         }
     }
 
 
-    public void AddToPot(int amount)
+    public void AddToCurrentBet(int amount)
     {
-        // Add the amount to the pot
-        pot += amount;
         currentBet = amount;
-        UIManager.instance.UpdatePot(pot);
     }
 
 
     public void StartGame()
     {
         // Initialize small blind and big blind
-        smallBlindAmount = minimumBet;
-        bigBlindAmount = smallBlindAmount * 2;
+        smallBlind = minimumBet;
+        bigBlind = smallBlind * 2;
 
         // Reset the game state
         pot = 0;
@@ -96,17 +87,11 @@ public class GameController : MonoBehaviour
         currentBet = 0;
         currentPlayerIndex = 0;
 
-        // Reset player bets and hands
+        // Reset player bets and hands and update UI data at the beginning
         foreach (Player player in playersAndBots)
         {
             player.ClearBets();
             player.hand.Clear();
-        }
-
-
-        // Baþta UI datalarýný güncelle
-        foreach (Player player in playersAndBots) 
-        {
             UIManager.instance.UpdatePlayerUI(player);
         }
 
@@ -152,18 +137,16 @@ public class GameController : MonoBehaviour
                 break;
 
             case GameState.Showdown:
-                //// Her oyuncunun el deðerini hesapla
-                //foreach (Player player in playersAndBots)
-                //{
-                //    //player.handValue = deckManager.CompareHand(player.hand);
-                //}
-                //// Kazananý belirle
-                //Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
+                // Her oyuncunun el deðerini hesapla
+                EvaluateHands();
 
-                //// Kazanan oyuncuya pot'u ver
-                //winner.money += pot;
+                // Kazananý belirle
+                Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
 
-                //// Oyunun sonucunu göster
+                // Kazanan oyuncuya pot'u ver
+                winner.money += pot;
+
+                // Oyunun sonucunu göster
                 break;
         }
     }
@@ -171,15 +154,10 @@ public class GameController : MonoBehaviour
 
     public IEnumerator StartBettingRound()
     {
-        yield return new WaitForSeconds(5f);
-
+        yield return new WaitForSeconds(3f);
 
         // Start with small and big blinds
         MakeBlindBets();
-
-
-        yield return new WaitForSeconds(2f);
-
 
         // Start the betting process
         yield return StartCoroutine(ProcessBettingRound());
@@ -205,6 +183,7 @@ public class GameController : MonoBehaviour
             {
                 continue;
             }
+
             // Handle player turn
             yield return HandlePlayerTurn(currentPlayer);
 
@@ -214,7 +193,7 @@ public class GameController : MonoBehaviour
 
         // Bahis turu tamamlandýðýnda devam eden iþlemleri gerçekleþtir
         gameState++;
-        UpdateGameState(); // Update game state for next round
+        UpdateGameState();
     }
 
 
@@ -248,30 +227,12 @@ public class GameController : MonoBehaviour
 
         // Update UI after bot's decision
         UIManager.instance.UpdatePlayerUI(currentPlayer);
-
-        yield return new WaitForSeconds(2f);
     }
-
-    //public IEnumerator WaitForHumanPlayerAction()
-    //{
-    //    while (true)
-    //    {
-    //        // Oyuncunun bahis yapmasýný bekleyin
-    //        yield return null;
-
-    //        // UI Butonuna týklama kontrolü
-    //        if (UIManager.instance.IsBettingButtonActive() && currentPlayerIndex == 0)
-    //        {
-    //            // Butona týklanmýþ, döngüden çýk
-    //            break;
-    //        }
-    //    }
-    //}
 
 
     public void NextPlayer()
     {
-        currentPlayerIndex = (currentPlayerIndex + 1) % playersAndBots.Count;
+        currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
     }
 
     private void MakeBlindBets()
@@ -279,13 +240,13 @@ public class GameController : MonoBehaviour
         // Small blind
         currentPlayerIndex = Random.Range(0, playersAndBots.Count);
         Player smallBlindPlayer = playersAndBots[currentPlayerIndex];
-        smallBlindPlayer.MakeBet(smallBlindAmount);
+        smallBlindPlayer.MakeBet(smallBlind);
         UIManager.instance.UpdatePlayerUI(smallBlindPlayer);
 
         // Big blind
         currentPlayerIndex = (currentPlayerIndex + 1) % playersAndBots.Count;
         Player bigBlindPlayer = playersAndBots[currentPlayerIndex];
-        bigBlindPlayer.MakeBet(bigBlindAmount);
+        bigBlindPlayer.MakeBet(bigBlind);
         UIManager.instance.UpdatePlayerUI(bigBlindPlayer);
 
         NextPlayer();

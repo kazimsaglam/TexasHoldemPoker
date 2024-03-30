@@ -23,20 +23,22 @@ public class Player : MonoBehaviour
     public int betRoundIndex;
 
 
-    public Player(string name, int startingMoney)
+    public void SetPlayer(string name, int startingMoney)
     {
+        this.gameObject.name = name;
         playerName = name;
         money = startingMoney;
         hand = new List<Card>();
         betAmount = 0;
-        isFolded = true;
+        isFolded = false;
     }
 
     public void MakeBet(int amount)
     {
         betAmount = amount;
         money -= amount;
-        GameController.instance.AddToPot(amount);
+        UIManager.instance.UpdatePot(amount);
+        GameController.instance.AddToCurrentBet(amount);
     }
 
     public void Call() // amount: Masadaki mevcut bahis
