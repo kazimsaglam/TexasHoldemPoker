@@ -9,18 +9,17 @@ public class Player : MonoBehaviour
     public string playerName;
     public int money;
 
-
     public List<Card> hand;
     public int handValue;
     public string handValueString;
     public bool isFolded = false;
     public int betAmount; // Oyuncunun mevcut bahisi
-
+    public int betRoundIndex;
 
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI betText;
-
-    public int betRoundIndex;
+    public GameObject playerActionTextPrefab;
+    public Transform playerActionTextContainer;
 
 
     public void SetPlayer(string name, int startingMoney)
@@ -39,6 +38,8 @@ public class Player : MonoBehaviour
         money -= amount;
         UIManager.instance.UpdatePot(amount);
         GameController.instance.AddToCurrentBet(amount);
+
+        ShowPlayerAction("Call");
     }
 
     public void Call() // amount: Masadaki mevcut bahis
@@ -92,9 +93,14 @@ public class Player : MonoBehaviour
 
 
 
-    /// <summary>
-    /// Checks what kind of match you have onyour hand and writes it to the UI
-    /// </summary>
+    public void ShowPlayerAction(string action)
+    {
+        GameObject textObj = Instantiate(playerActionTextPrefab, playerActionTextContainer);
+        textObj.GetComponent<TextMeshProUGUI>().text = action;
+    }
+
+
+    // Checks what kind of match you have onyour hand and writes it to the UI
     public void CompareHand(List<Card> boardCards)
     {
         List<Card> handToCompare = new List<Card>();

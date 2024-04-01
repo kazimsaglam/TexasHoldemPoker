@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI potText;
 
     private Player mainPlayer;
+    private CardDealerAnimation cardDealerAnim;
 
     private void Awake()
     {
@@ -25,6 +26,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        cardDealerAnim = GetComponent<CardDealerAnimation>();
         mainPlayer = GameController.instance.playersAndBots[0];
 
         HideBettingButtons();
@@ -66,6 +68,14 @@ public class UIManager : MonoBehaviour
 
         HideBettingButtons();
 
+        for (int i = 1; i >= 0; i--)
+        {
+            cardDealerAnim.AnimateFoldCardDeal(mainPlayer.hand[i].gameObject , GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+        }
+
+        mainPlayer.ClearHand();
+        mainPlayer.ClearBets();
+
         // Sýradaki oyuncuya geçin
         IsBettingButtonActive();
     }
@@ -83,6 +93,8 @@ public class UIManager : MonoBehaviour
 
         // UI'yi güncelleyin
         UpdatePlayerUI(mainPlayer);
+
+        mainPlayer.ShowPlayerAction("Call");
 
         HideBettingButtons();
 

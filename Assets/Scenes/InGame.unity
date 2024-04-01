@@ -1496,7 +1496,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -3.48, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &949642743
@@ -2975,34 +2975,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: potText
+      value: 
+      objectReference: {fileID: 503060233}
+    - target: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: callButton
+      value: 
+      objectReference: {fileID: 833216005}
+    - target: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: foldButton
+      value: 
+      objectReference: {fileID: 1372722806}
+    - target: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: AllInButton
+      value: 
+      objectReference: {fileID: 949642745}
+    - target: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: checkButton
+      value: 
+      objectReference: {fileID: 1379559262}
+    - target: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: raiseButton
+      value: 
+      objectReference: {fileID: 568410654}
+    - target: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: raiseAmountInput
+      value: 
+      objectReference: {fileID: 1035599716}
     - target: {fileID: 7024516915771828910, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
       propertyPath: m_Name
       value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 7024516915771828910, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8030203381143135348, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
-      propertyPath: dealDuration
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8030203381143135348, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
-      propertyPath: gameController
-      value: 
-      objectReference: {fileID: 7805344352802770269}
-    - target: {fileID: 8030203381143135348, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
-      propertyPath: placeholderHand
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8030203381143135348, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
       propertyPath: placeholderBoard
       value: 
       objectReference: {fileID: 1852726227}
-    - target: {fileID: 8030203381143135348, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
-      propertyPath: drawPlayerCardsButton
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8030203381143135348, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
       propertyPath: placeholderPlayerHands.Array.data[0]
       value: 
@@ -3022,58 +3030,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7024516915771828910, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 7805344352802770269}
-    - targetCorrespondingSourceObject: {fileID: 7024516915771828910, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
-      insertIndex: 2
-      addedObject: {fileID: 7805344352802770272}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
---- !u!1 &1388373926490344397 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7024516915771828910, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+--- !u!114 &7805344352802770272 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5021604439858486582, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
   m_PrefabInstance: {fileID: 304318226534457942}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7805344352802770269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1388373926490344397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0703eed161a63e43875169cb862019f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playersAndBots: []
-  playerPrefab: {fileID: 5976674556933541172, guid: e05581f108c2a1340bdeaca0dfad605b, type: 3}
-  botPrefab: {fileID: 2148650586792177741, guid: d85861749001b2e40bfc0a8e3f0ef771, type: 3}
-  numPlayers: 4
-  currentPlayerIndex: 0
-  minimumBet: 20
-  currentBet: 0
-  pot: 0
---- !u!114 &7805344352802770272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1388373926490344397}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 130d635f367b3494ca93674a64bc5c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  foldButton: {fileID: 1372722806}
-  checkButton: {fileID: 1379559262}
-  callButton: {fileID: 833216005}
-  raiseButton: {fileID: 568410654}
-  AllInButton: {fileID: 949642745}
-  raiseAmountInput: {fileID: 1035599716}
-  potText: {fileID: 503060233}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
