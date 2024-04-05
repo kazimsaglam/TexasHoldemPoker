@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 525652211889750631}
+  - component: {fileID: 2976502923668666984}
+  - component: {fileID: 5021604439858486582}
   - component: {fileID: 8030203381143135348}
   - component: {fileID: 2286012764219799914}
   m_Layer: 0
@@ -33,6 +35,45 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2976502923668666984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024516915771828910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0703eed161a63e43875169cb862019f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playersAndBots: []
+  playerPrefab: {fileID: 5976674556933541172, guid: e05581f108c2a1340bdeaca0dfad605b, type: 3}
+  botPrefab: {fileID: 2148650586792177741, guid: d85861749001b2e40bfc0a8e3f0ef771, type: 3}
+  numPlayers: 4
+  currentPlayerIndex: 0
+  minimumBet: 20
+  currentBet: 0
+  pot: 0
+--- !u!114 &5021604439858486582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024516915771828910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 130d635f367b3494ca93674a64bc5c15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  foldButton: {fileID: 0}
+  checkButton: {fileID: 0}
+  callButton: {fileID: 0}
+  raiseButton: {fileID: 0}
+  AllInButton: {fileID: 0}
+  raiseAmountInput: {fileID: 0}
+  potText: {fileID: 0}
 --- !u!114 &8030203381143135348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,16 +141,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6d944b08f412d6741aa4377a297a0557, type: 2}
   - {fileID: 11400000, guid: 9fd4d61dc12a55342afdac0671fbc52c, type: 2}
   - {fileID: 11400000, guid: 3b8a71456787fda4685abeab9c1025a7, type: 2}
-  dealDuration: 0.5
+  dealDuration: 0.3
   cardSpacing: 80
   placeholderBoard: {fileID: 0}
-  placeholderHand: {fileID: 0}
   placeholderPlayerHands:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  drawPlayerCardsButton: {fileID: 0}
   boardCards: []
 --- !u!114 &2286012764219799914
 MonoBehaviour:

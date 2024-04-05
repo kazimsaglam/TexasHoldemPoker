@@ -179,16 +179,14 @@ public class GameController : MonoBehaviour
         {
             currentPlayer = playersAndBots[currentPlayerIndex];
 
-            if (currentPlayer.isFolded)
+            if (!currentPlayer.isFolded)
             {
-                continue;
+                // Handle player turn
+                yield return HandlePlayerTurn(currentPlayer);
             }
 
-            // Handle player turn
-            yield return HandlePlayerTurn(currentPlayer);
-
-            // Move to next player
-            NextPlayer();
+                // Move to next player
+                NextPlayer();
         } while (currentPlayer.betRoundIndex != 2);
 
         // Bahis turu tamamlandýðýnda devam eden iþlemleri gerçekleþtir

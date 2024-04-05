@@ -11,6 +11,11 @@ public class CardDealerAnimation : MonoBehaviour
         StartCoroutine(AnimateCardMovement(card, targetPos));
     }
 
+    public void AnimateFoldCardDeal(GameObject card, Vector3 targetPos)
+    {
+        StartCoroutine(AnimateFoldCardMovement(card, targetPos));
+    }
+
     IEnumerator AnimateCardMovement(GameObject card, Vector3 targetPos)
     {
         Vector3 startPos = card.transform.position;
@@ -26,6 +31,25 @@ public class CardDealerAnimation : MonoBehaviour
         }
 
         card.transform.position = targetPos;
+    }
+
+    IEnumerator AnimateFoldCardMovement(GameObject card, Vector3 targetPos)
+    {
+        Vector3 startPos = card.transform.position;
+
+        float startTime = Time.time;
+        while (Time.time - startTime < dealDuration)
+        {
+            float t = (Time.time - startTime) / dealDuration;
+
+            card.transform.position = Vector3.Lerp(startPos, targetPos, t);
+
+            yield return null;
+        }
+
+        card.transform.position = targetPos;
+
+        Destroy(card);
     }
 
 }
