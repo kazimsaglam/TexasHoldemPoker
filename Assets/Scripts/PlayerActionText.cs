@@ -8,7 +8,6 @@ public class PlayerActionText : MonoBehaviour
 
     private void Update()
     {
-        // Yukarý doðru kaydýr
         transform.position += new Vector3(0f, moveSpeed * Time.deltaTime, 0f);
 
         Destroy(gameObject, fadeTime);

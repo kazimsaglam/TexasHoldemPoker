@@ -22,11 +22,8 @@ public class GameController : MonoBehaviour
     private int smallBlind;
     private int bigBlind;
 
-
     private GameState gameState;
-
     private DeckManager deckManager;
-
 
 
     private void Awake()
@@ -71,7 +68,10 @@ public class GameController : MonoBehaviour
 
     public void AddToCurrentBet(int amount)
     {
-        currentBet = amount;
+        if(amount > currentBet)
+        {
+            currentBet = amount;
+        }
     }
 
 
@@ -116,6 +116,9 @@ public class GameController : MonoBehaviour
                 // Masaya 3 kart daðýt
                 deckManager.DealBoardCards();
 
+                // Oyuncu bahislerini sýfýrla
+                ResetPlayerBets();
+
                 // Tüm oyunculara sýrayla bahis yaptýr
                 StartCoroutine(ProcessBettingRound());
                 break;
@@ -123,6 +126,9 @@ public class GameController : MonoBehaviour
             case GameState.Turn:
                 // Masaya 4. kartý daðýt
                 deckManager.DealBoardCards();
+
+                // Oyuncu bahislerini sýfýrla
+                ResetPlayerBets();
 
                 // Tüm oyunculara sýrayla bahis yaptýr
                 StartCoroutine(ProcessBettingRound());
@@ -132,11 +138,17 @@ public class GameController : MonoBehaviour
                 // Masaya 5. kartý daðýt
                 deckManager.DealBoardCards();
 
+                // Oyuncu bahislerini sýfýrla
+                ResetPlayerBets();
+
                 // Tüm oyunculara sýrayla bahis yaptýr
                 StartCoroutine(ProcessBettingRound());
                 break;
 
             case GameState.Showdown:
+                // Oyuncu bahislerini sýfýrla
+                ResetPlayerBets();
+
                 // Her oyuncunun el deðerini hesapla
                 EvaluateHands();
 
@@ -200,6 +212,8 @@ public class GameController : MonoBehaviour
         // Handle Human Player Interaction
         if (currentPlayerIndex == 0)
         {
+            SoundManager.instance.PlayDingSound();
+
             // Show betting buttons for human player interaction
             UIManager.instance.ShowBettingButtons();
 
@@ -216,7 +230,6 @@ public class GameController : MonoBehaviour
             // Simulate bot thinking time
             yield return new WaitForSeconds(2f);
 
-            // Implement bot strategy based on hand strength, pot size, etc.
             botPlayer.MakeDecision(currentBet, pot);
         }
 
@@ -225,6 +238,8 @@ public class GameController : MonoBehaviour
 
         // Update UI after bot's decision
         UIManager.instance.UpdatePlayerUI(currentPlayer);
+
+        yield return new WaitForSeconds(1f);
     }
 
 
@@ -248,6 +263,15 @@ public class GameController : MonoBehaviour
         UIManager.instance.UpdatePlayerUI(bigBlindPlayer);
 
         NextPlayer();
+    }
+
+    public void ResetPlayerBets()
+    {
+        foreach (var player in playersAndBots)
+        {
+            player.ClearBets();
+            UIManager.instance.UpdatePlayerUI(player);
+        }
     }
 
 

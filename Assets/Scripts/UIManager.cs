@@ -13,11 +13,11 @@ public class UIManager : MonoBehaviour
     public Button raiseButton;
     public Button AllInButton;
     public TMP_InputField raiseAmountInput;
-
     public TextMeshProUGUI potText;
 
     private Player mainPlayer;
     private CardDealerAnimation cardDealerAnim;
+
 
     private void Awake()
     {
@@ -51,7 +51,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdatePot(int newPot)
     {
-        GameController.instance.pot= newPot;
+        GameController.instance.pot += newPot;
         potText.text = $"Pot: ${GameController.instance.pot}";
     }
 
@@ -74,140 +74,171 @@ public class UIManager : MonoBehaviour
         }
 
         mainPlayer.ClearHand();
-        mainPlayer.ClearBets();
 
-        // Sýradaki oyuncuya geçin
+        mainPlayer.ShowPlayerAction("Fold");
+
+        SoundManager.instance.PlayFoldSound();
+
+        // Sýradaki oyuncuya geç
         IsBettingButtonActive();
     }
 
     public void Call()
     {
-        // Mevcut bahis kontrolü
-        int currentBet = GameController.instance.currentBet;
+        // Call yapmak için gereken para miktarýný hesapla
+        int callAmount = GameController.instance.currentBet - mainPlayer.betAmount;
 
-        // Bahsi kabul edin ve paradan düþürün
-        mainPlayer.betAmount = currentBet;
-        mainPlayer.money -= currentBet;
+        if(mainPlayer.money <= callAmount)
+        {
+            AllIn();
+            return;
+        }
 
-        GameController.instance.AddToCurrentBet(currentBet);
+        // Bahsi kabul et ve paradan düþ
+        mainPlayer.betAmount += callAmount;
+        mainPlayer.money -= callAmount;
 
-        // UI'yi güncelleyin
+        UpdatePot(callAmount);
+
+        // UI'yi güncelle
         UpdatePlayerUI(mainPlayer);
 
         mainPlayer.ShowPlayerAction("Call");
 
+        SoundManager.instance.PlayCallAndRaiseSound();
+
         HideBettingButtons();
 
-        // Sýradaki oyuncuya geçin
+        // Sýradaki oyuncuya geç
         IsBettingButtonActive();
     }
 
     public void Raise()
     {
-        // InputField'ý aktif hale getirin
+        // InputField'ý aktif hale getir
         raiseAmountInput.gameObject.SetActive(true);
 
-        // Enter tuþuna basýlmasýný dinleyin
+        // Enter tuþuna basýlmasýný dinle
         raiseAmountInput.onEndEdit.AddListener(OnRaiseAmountInputEndEdit);
 
-        // Raise butonuna basýlmasýný dinleyin
-        raiseButton.onClick.AddListener(OnRaiseButtonClick);       
+        // Raise butonuna basýlmasýný dinle
+        raiseButton.onClick.AddListener(OnRaiseButtonClick);
+
+        // Önerilen bahis tutarý hesaplama
+        int suggestedRaise = GameController.instance.currentBet * 2;
+        raiseAmountInput.placeholder.GetComponent<TMP_Text>().text = suggestedRaise.ToString();
     }
 
     private void OnRaiseAmountInputEndEdit(string text)
     {
         // Enter tuþuna basýldýysa
-        if (Input.GetKeyDown(KeyCode.Return) && !string.IsNullOrEmpty(raiseAmountInput.text))
+        if (Input.GetKeyDown(KeyCode.Return) && !string.IsNullOrEmpty(raiseAmountInput.text) && int.Parse(raiseAmountInput.text) > GameController.instance.currentBet)
         {
-            // Ýþlemi tamamlayýn
+            // Ýþlemi tamamla
             ProcessRaise();
         }
     }
 
     private void OnRaiseButtonClick()
     {
-        if (!string.IsNullOrEmpty(raiseAmountInput.text))
+        if (!string.IsNullOrEmpty(raiseAmountInput.text) && int.Parse(raiseAmountInput.text) > GameController.instance.currentBet)
         {
-            // Ýþlemi tamamlayýn
+            // Ýþlemi tamamla
             ProcessRaise();
         }
     }
 
     private void ProcessRaise()
     {
-        // Girilen deðeri int'e dönüþtürün
         int raiseAmount = int.Parse(raiseAmountInput.text);
 
-        // Bahsi yükseltin ve paradan düþürün
-        mainPlayer.betAmount = raiseAmount;
+        if(raiseAmount >= mainPlayer.money)
+        {
+            AllIn();
+            return;
+        }
+
+        // Bahsi yükselt ve paradan düþ
+        mainPlayer.betAmount += raiseAmount;
         mainPlayer.money -= raiseAmount;
 
-        // Mevcut bahsi güncelleyin
+        // Mevcut bahsi güncelle
         GameController.instance.AddToCurrentBet(raiseAmount);
         UpdatePot(raiseAmount);
 
-        // UI'yi güncelleyin
+        // UI'yi güncelle
         UpdatePlayerUI(mainPlayer);
+
+        mainPlayer.ShowPlayerAction($"Raýse: {raiseAmount}");
+
+        SoundManager.instance.PlayCallAndRaiseSound();
 
         HideBettingButtons();
 
-        // Sýradaki oyuncuya geçin
+        raiseAmountInput.text = null;
+
+        // Sýradaki oyuncuya geç
         IsBettingButtonActive();
     }
 
     public void AllIn()
     {
-        // Tüm parayý bahis olarak yatýrýn
+        // Tüm parayý bahis olarak yatýr
         int raiseAmount = mainPlayer.money;
 
-        // Bahsi yükseltin ve paradan düþürün
-        mainPlayer.betAmount = raiseAmount;
+        // Bahsi yükselt ve paradan düþ
+        mainPlayer.betAmount += raiseAmount;
         mainPlayer.money -= raiseAmount;
 
-        // Mevcut bahsi güncelleyin
+        // Mevcut bahsi güncelle
         GameController.instance.AddToCurrentBet(raiseAmount);
         UpdatePot(raiseAmount);
 
-        // UI'yi güncelleyin
+        // UI'yi güncelle
         UpdatePlayerUI(mainPlayer);
 
-        // InputField'ý temizleyin
-        raiseAmountInput.text = "";
+        mainPlayer.ShowPlayerAction("All In");
+
+        SoundManager.instance.PlayCallAndRaiseSound();
 
         HideBettingButtons();
 
-        // Sýradaki oyuncuya geçin
+        // Sýradaki oyuncuya geç
         IsBettingButtonActive();
     }
 
 
     public void Check()
     {
-        // Mevcut bahsi kontrol edin
+        // Mevcut bahsi kontrol et
         int currentBet = GameController.instance.currentBet;
 
-        // Bahis 0 ise check yapamazsýnýz
+        // Bahis 0 ise check yapamazsýn
         if (currentBet == 0)
         {
             Debug.Log("Bahis yapmanýz gerekiyor.");
             return;
         }
 
-        // Bahsi kabul edin
+        // Bahsi kabul et
         mainPlayer.betAmount = currentBet;
 
-        // UI'yi güncelleyin
+        // UI'yi güncelle
         UpdatePlayerUI(mainPlayer);
+
+        mainPlayer.ShowPlayerAction("Check");
+
+        SoundManager.instance.PlayCheckSound();
 
         HideBettingButtons();
 
-        // Sýradaki oyuncuya geçin
+        // Sýradaki oyuncuya geç
         IsBettingButtonActive();
     }
 
     public bool IsBettingButtonActive()
     {
-        // Butonlarýn aktiflik durumunu kontrol edin
+        // Butonlarýn aktiflik durumunu kontrol et
         if (callButton.interactable || foldButton.interactable)
         {
             return true;
@@ -218,6 +249,8 @@ public class UIManager : MonoBehaviour
         }
     }
 
+
+    ///////////////////////******** Paramýz currentBet'den az kaldýysa oyun direkt olarak AllIn Yapsýn. ********///////////////////////
 
 
     //betAmount: Oyuncunun bahis turunda yatýrdýðý toplam bahis miktarýný temsil eder.
