@@ -128,5 +128,26 @@ public class Player : MonoBehaviour
         handValue = pk.strength;
         handValueString = pk.printResult();
     }
+    public int CompareHighestCard(Player otherPlayer)
+    {
+        // Oyuncularýn ellerindeki kartlarý deðerine göre sýralar
+        this.hand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+        otherPlayer.hand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+
+        // Kartlardan baþlayarak sýrayla karþýlaþtýrma yapar
+        for (int i = 0; i < this.hand.Count; i++)
+        {
+            if (this.hand[i].cardValue > otherPlayer.hand[i].cardValue)
+            {
+                return 1; // Bu oyuncunun kartý daha güçlü
+            }
+            else if (this.hand[i].cardValue < otherPlayer.hand[i].cardValue)
+            {
+                return -1; // Diðer oyuncunun kartý daha güçlü
+            }
+        }
+
+        return 0; // Kartlar eþit, berabere
+    }
 
 }

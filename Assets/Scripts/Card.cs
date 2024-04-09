@@ -13,7 +13,10 @@ public class Card : MonoBehaviour, IComparable
     public GameObject cardFront;
     public GameObject cardBack;
 
-
+    private void Start()
+    {
+        GameController.instance.EndOfTour += FinishTour;
+    }
 
     public void UpdateCardVisual(bool isFaceUp)
     {
@@ -29,7 +32,11 @@ public class Card : MonoBehaviour, IComparable
             cardBack.SetActive(true);
         }
     }
-
+    public void FinishTour()
+    {
+        cardBack?.SetActive(false);
+        cardFront.SetActive(true);
+    }
 
     /// <summary>
     /// Icomparable interface

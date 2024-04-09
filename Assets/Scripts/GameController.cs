@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 public enum GameState { PreFlop, Flop, Turn, River, Showdown }
@@ -28,7 +29,8 @@ public class GameController : MonoBehaviour
     private DeckManager deckManager;
 
 
-
+    public List<Player> Winners;
+    public event System.Action EndOfTour;
     private void Awake()
     {
         instance = this;
@@ -139,12 +141,13 @@ public class GameController : MonoBehaviour
             case GameState.Showdown:
                 // Her oyuncunun el deðerini hesapla
                 EvaluateHands();
-
+                EndOfTourPanel.instance.CardInfo();
+                EndOfTour?.Invoke();
                 // Kazananý belirle
-                Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
+                //Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
 
-                // Kazanan oyuncuya pot'u ver
-                winner.money += pot;
+                //// Kazanan oyuncuya pot'u ver
+                //winner.money += pot;
 
                 // Oyunun sonucunu göster
                 break;
@@ -258,25 +261,54 @@ public class GameController : MonoBehaviour
         {
             player.CompareHand(deckManager.boardCards);
         }
+        int maxHandValue = playersAndBots.Max(player => player.handValue);
+
+        // En yüksek el deðerine sahip olan tüm oyuncularý bul
+        var tiedPlayers = playersAndBots.Where(player => player.handValue == maxHandValue).ToList();
+        Debug.Log("Elleri eþit olan oyuncu sayýsý" + tiedPlayers.Count);
+        //Eðer bir veya daha fazla oyuncu ayný en yüksek el deðerine sahipse
+        if (tiedPlayers.Count > 1)
+        {
+            // Oyuncularý karþýlaþtýrarak kazananý belirle
+            Player winningPlayer = tiedPlayers[0];
+            foreach (Player player in tiedPlayers)
+            {
+                int compareResult = player.CompareHighestCard(winningPlayer);
+                if (compareResult > 0)
+                {
+                    winningPlayer = player;
+                }
+            }
+
+            Debug.Log("Kazanan oyuncu kart gücü hesaplandý: " + winningPlayer.playerName);
+            EndGame(winningPlayer);
+        }
+        else
+        {
+            // Tek bir kazanan varsa, onu belirle
+            Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
+            EndGame(winner);
+        }
     }
 
 
-    public void EndGame()
+    public void EndGame(Player winner)
     {
+        Winners.Add(winner);
         // Kazanan oyuncuyu belirle
-        Player winnerPlayer = playersAndBots[0];
+        //Player winnerPlayer = playersAndBots[0];
 
         // Kazananýn potu almasýný saðla
-        winnerPlayer.money += pot;
+        //winnerPlayer.money += pot;
 
         // Oyun sonucunu göster
         //UIManager.instance.ShowEndGameUI(winnerPlayer);
 
         // Reset the game state
-        ResetGame();
+        //ResetGame();
 
         // Start the next game
-        StartGame();
+        //StartGame();
     }
 
     void ResetGame()

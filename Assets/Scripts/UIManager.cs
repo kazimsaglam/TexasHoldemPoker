@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
     {
         cardDealerAnim = GetComponent<CardDealerAnimation>();
         mainPlayer = GameController.instance.playersAndBots[0];
-
+        GameController.instance.EndOfTour += ButtonActiveControll;
         HideBettingButtons();
     }
 
@@ -217,7 +217,14 @@ public class UIManager : MonoBehaviour
             return false;
         }
     }
+    public void ButtonActiveControll()
+    {
+        callButton.gameObject.SetActive(false);
+        foldButton.gameObject.SetActive(false);
+        checkButton.gameObject.SetActive(false);
+        raiseButton.gameObject.SetActive(false);
 
+    }
 
 
     //betAmount: Oyuncunun bahis turunda yatýrdýðý toplam bahis miktarýný temsil eder.
