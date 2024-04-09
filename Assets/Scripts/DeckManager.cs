@@ -17,9 +17,7 @@ public class DeckManager : MonoBehaviour
     public GameObject placeholderBoard;
     public GameObject[] placeholderPlayerHands;
 
-
     public List<Card> boardCards;
-
 
     private GameObject cardObj;
     private int numCardsBoard = 0;
@@ -53,6 +51,7 @@ public class DeckManager : MonoBehaviour
                 numCardsBoard++;
 
                 AnimateCardDeal(cardObj, placeholderBoard.transform.position + Vector3.right * cardSpacing * i);
+                SoundManager.instance.PlayCardDealSound();
 
                 yield return new WaitForSeconds(dealDuration);
             }
@@ -65,6 +64,7 @@ public class DeckManager : MonoBehaviour
             deck.Remove(deck[0]);
 
             AnimateCardDeal(cardObj, placeholderBoard.transform.position + Vector3.right * cardSpacing * (numCardsBoard - 1));
+            SoundManager.instance.PlayCardDealSound();
 
             yield return new WaitForSeconds(dealDuration);
         }
@@ -99,6 +99,7 @@ public class DeckManager : MonoBehaviour
                 deck.Remove(deck[j]);
 
                 AnimateCardDeal(cardObj, placeholderPlayerHands[i].transform.position + Vector3.right * cardSpacing * j);
+                SoundManager.instance.PlayCardDealSound();
 
                 yield return new WaitForSeconds(dealDuration);
             }

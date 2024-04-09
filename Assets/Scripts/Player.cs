@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-
 public class Player : MonoBehaviour
 {
     public string playerName;
@@ -40,6 +39,8 @@ public class Player : MonoBehaviour
         GameController.instance.AddToCurrentBet(amount);
 
         ShowPlayerAction("Call");
+
+        SoundManager.instance.PlayCallAndRaiseSound();
     }
 
     public void Call() // amount: Masadaki mevcut bahis
@@ -96,7 +97,7 @@ public class Player : MonoBehaviour
     public void ShowPlayerAction(string action)
     {
         GameObject textObj = Instantiate(playerActionTextPrefab, playerActionTextContainer);
-        textObj.GetComponent<TextMeshProUGUI>().text = action;
+        textObj.GetComponent<TextMeshProUGUI>().text = $"- {action}";
     }
 
 

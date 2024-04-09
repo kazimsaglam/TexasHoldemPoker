@@ -148,4 +148,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 50
-  fadeTime: 5
+  fadeTime: 2.5
