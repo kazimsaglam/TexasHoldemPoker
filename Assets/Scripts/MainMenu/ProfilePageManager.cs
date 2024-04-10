@@ -42,6 +42,8 @@ namespace MainMenu
         .GetWinOrTotalGameCount("win");
       winText.text = winCount;
 
+      // Fetch the full name
+
       int wins = int.Parse(winCount);
       int totalCount = int.Parse(totalGameCount);
 

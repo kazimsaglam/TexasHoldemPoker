@@ -342,6 +342,30 @@ namespace Database
       }
     }
 
+    public async Task<string> GetFullName()
+    {
+      if (_auth.CurrentUser != null)
+      {
+        string userId = _auth.CurrentUser.UserId;
+
+        DataSnapshot snapshot = await _databaseReference.Child("userData")
+          .Child(userId).Child("playerName").GetValueAsync();
+
+        if (snapshot.Exists)
+        {
+          return snapshot.Value.ToString();
+        }
+        else
+        {
+          return "Full name not found for the user";
+        }
+      }
+      else
+      {
+        return "User not authenticated";
+      }
+    }
+
     public async Task<string> GetWinOrTotalGameCount(string state)
     {
       if (_auth.CurrentUser != null)
@@ -396,7 +420,6 @@ namespace Database
       {
         Task setWinCountTask = _databaseReference.Child("userData").Child(_auth.CurrentUser.UserId)
           .Child("win").SetValueAsync(count);
-
 
         Task.WhenAll(setWinCountTask).ContinueWithOnMainThread(task =>
         {

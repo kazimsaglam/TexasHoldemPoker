@@ -1,19 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
-using System;
 
-public enum CardValue { two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace };
-public enum CardColor { hearts, diamonds, spades, clubs }
+public enum CardValue
+{
+  Two,
+  Three,
+  Four,
+  Five,
+  Six,
+  Seven,
+  Eight,
+  Nine,
+  Ten,
+  Jack,
+  Queen,
+  King,
+  Ace
+};
+
+public enum CardColor
+{
+  Hearts,
+  Diamonds,
+  Spades,
+  Clubs
+}
 
 [CreateAssetMenu(fileName = "New Card", menuName = "Cards/CardData")]
 [Serializable]
 public class CardData : ScriptableObject
 {
-    
-    public Sprite cardSprite;   
-    public CardValue cardValue;
-    public CardColor cardColor;
-
+  public Sprite cardSprite;
+  public CardValue cardValue;
+  public CardColor cardColor;
 }

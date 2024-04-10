@@ -63,9 +63,15 @@ namespace UI
       mainMenuPanel.SetActive(true);
     }
 
-    public void OnOpenGameScene()
+    public void OnCloseProfilePanel()
     {
-      SceneManager.LoadScene("Scenes/GameScene");
+      profilePanel.SetActive(false);
+      mainMenuPanel.SetActive(true);
+    }
+
+    public void OnOpenInGameScene()
+    {
+      SceneManager.LoadScene("Scenes/InGame");
     }
 
     public void OnSignOut()

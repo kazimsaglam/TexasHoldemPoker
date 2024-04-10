@@ -12,8 +12,7 @@ namespace Game
 
     private void Start()
     {
-      // FirebaseAuthManager.OnMoneyUpdate += UpdateMoney;
-      // FirebaseAuthManager.OnGameCountUpdate += UpdateWinAndGameCount;
+      
     }
 
 

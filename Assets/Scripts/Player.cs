@@ -1,132 +1,145 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Database;
+using Game;
 using TMPro;
+using UnityEngine;
 
+public enum PlayerType
+{
+  Player,
+  Bot,
+  None
+}
 
 public class Player : MonoBehaviour
 {
-    public string playerName;
-    public int money;
+  public string playerName;
+  public int money;
+  public PlayerType playerType;
 
-    public List<Card> hand;
-    public int handValue;
-    public string handValueString;
-    public bool isFolded = false;
-    public int betAmount; // Oyuncunun mevcut bahisi
-    public int betRoundIndex;
+  public List<Card> hand;
+  public int handValue;
+  public string handValueString;
+  public bool isFolded = false;
+  public int betAmount; // Player's current bet
+  public int betRoundIndex;
 
-    public TextMeshProUGUI moneyText;
-    public TextMeshProUGUI betText;
-    public GameObject playerActionTextPrefab;
-    public Transform playerActionTextContainer;
+  public TextMeshProUGUI moneyText;
+  public TextMeshProUGUI betText;
+  public GameObject playerActionTextPrefab;
+  public Transform playerActionTextContainer;
 
 
-    public void SetPlayer(string name, int startingMoney)
+  public void SetPlayer(string fullName, int startingMoney, PlayerType type)
+  {
+    gameObject.name = fullName;
+    playerName = fullName;
+    money = startingMoney;
+    playerType = type;
+    hand = new List<Card>();
+    betAmount = 0;
+    isFolded = false;
+  }
+
+  public void MakeBet(int amount)
+  {
+    betAmount = amount;
+    money -= amount;
+
+    UIManager.instance.UpdatePot(amount);
+    GameController.instance.AddToCurrentBet(amount);
+
+    ShowPlayerAction("Call");
+  }
+
+  public void Call() // amount: Current bet
+  {
+    int callAmount = Mathf.Min(GameController.instance.currentBet, money);
+    MakeBet(callAmount);
+    if (playerType == PlayerType.Player)
     {
-        this.gameObject.name = name;
-        playerName = name;
-        money = startingMoney;
-        hand = new List<Card>();
-        betAmount = 0;
-        isFolded = false;
+      PlayerManager.Instance.playerMoney -= callAmount;
+      Debug.Log(PlayerManager.Instance.playerMoney);
+      FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
+    }
+  }
+
+  public void Fold()
+  {
+    isFolded = true;
+  }
+
+  protected void Check()
+  {
+    // Bahis yapmadan sÄ±rayÄ± bir sonraki oyuncuya geÃ§mek iÃ§in kullanÄ±lÄ±r
+    if (GameController.instance.minimumBet >= money)
+    {
+      // Masadaki en yÃ¼ksek bahis minimum bahse eÅŸit veya daha dÃ¼ÅŸÃ¼kse check yapÄ±lÄ±r
+      // Oyuncu elindeki tÃ¼m fiÅŸleri pot'a koyar
+      money -= GameController.instance.minimumBet;
+      GameController.instance.pot += GameController.instance.minimumBet;
+    }
+  }
+
+  public void Raise(int amount)
+  {
+    // Raise the bet
+    int raiseAmount = Mathf.Min(amount, money);
+    MakeBet(raiseAmount);
+  }
+
+  public void AllIn()
+  {
+    // TÃ¼m fiÅŸlerini masaya koymak iÃ§in kullanÄ±lÄ±r
+    money += GameController.instance.pot; // Pot'a eÅŸit miktarda fiÅŸ eklenir
+    GameController.instance.pot = 0; // Pot sÄ±fÄ±rlanÄ±r
+  }
+
+
+  public void ClearBets()
+  {
+    betAmount = 0;
+  }
+
+  public void ClearHand()
+  {
+    hand.Clear();
+  }
+
+
+  public void ShowPlayerAction(string action)
+  {
+    GameObject textObj = Instantiate(playerActionTextPrefab, playerActionTextContainer);
+    textObj.GetComponent<TextMeshProUGUI>().text = action;
+  }
+
+
+  // Checks what kind of match you have in your hand and writes it to the UI
+  public void CompareHand(List<Card> boardCards)
+  {
+    List<Card> handToCompare = new List<Card>();
+
+    //cards on the board
+    for (int i = 0; i < boardCards.Count; i++)
+    {
+      if (boardCards[i] != null)
+      {
+        handToCompare.Add(boardCards[i]);
+      }
     }
 
-    public void MakeBet(int amount)
+    //cards on the hand of player
+    for (int i = 0; i < hand.Count; i++)
     {
-        betAmount = amount;
-        money -= amount;
-        UIManager.instance.UpdatePot(amount);
-        GameController.instance.AddToCurrentBet(amount);
-
-        ShowPlayerAction("Call");
+      handToCompare.Add(hand[i]);
     }
 
-    public void Call() // amount: Masadaki mevcut bahis
-    {
-        int callAmount = Mathf.Min(GameController.instance.currentBet, money);
-        MakeBet(callAmount);
-    }
+    PokerHand pk = new PokerHand();
 
-    public void Fold()
-    {
-        isFolded = true;
-    }
+    //compare them out
+    pk.SetPokerHand(handToCompare.ToArray());
 
-    protected void Check()
-    {
-        // Bahis yapmadan sýrayý bir sonraki oyuncuya geçmek için kullanýlýr
-        if (GameController.instance.minimumBet >= money)
-        {
-            // Masadaki en yüksek bahis minimum bahse eþit veya daha düþükse check yapýlýr
-            // Oyuncu elindeki tüm fiþleri pot'a koyar
-            money -= GameController.instance.minimumBet;
-            GameController.instance.pot += GameController.instance.minimumBet;
-        }
-    }
-
-    public void Raise(int amount)
-    {
-        // Bahsi yükseltmek için kullanýlýr
-        int raiseAmount = Mathf.Min(amount, money);
-        MakeBet(raiseAmount);
-    }
-
-    public void AllIn()
-    {
-        // Tüm fiþlerini masaya koymak için kullanýlýr
-        money += GameController.instance.pot; // Pot'a eþit miktarda fiþ eklenir
-        GameController.instance.pot = 0; // Pot sýfýrlanýr
-    }
-
-
-
-    public void ClearBets()
-    {
-        betAmount = 0;
-    }
-
-    public void ClearHand()
-    {
-        hand.Clear();
-    }
-
-
-
-    public void ShowPlayerAction(string action)
-    {
-        GameObject textObj = Instantiate(playerActionTextPrefab, playerActionTextContainer);
-        textObj.GetComponent<TextMeshProUGUI>().text = action;
-    }
-
-
-    // Checks what kind of match you have onyour hand and writes it to the UI
-    public void CompareHand(List<Card> boardCards)
-    {
-        List<Card> handToCompare = new List<Card>();
-
-        //cards on the board
-        for (int i = 0; i < boardCards.Count; i++)
-        {
-            if (boardCards[i] != null)
-            {
-                handToCompare.Add(boardCards[i]);
-            }
-        }
-
-        //cards on the hand of player
-        for (int i = 0; i < hand.Count; i++)
-        {
-            handToCompare.Add(hand[i]);
-        }
-
-        PokerHand pk = new PokerHand();
-
-        //compare them out
-        pk.setPokerHand(handToCompare.ToArray());
-
-        handValue = pk.strength;
-        handValueString = pk.printResult();
-    }
-
+    handValue = pk.strength;
+    handValueString = pk.PrintResult();
+  }
 }
