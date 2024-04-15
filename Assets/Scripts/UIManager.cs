@@ -31,8 +31,16 @@ public class UIManager : MonoBehaviour
   {
     _cardDealerAnim = GetComponent<CardDealerAnimation>();
     _mainPlayer = GameController.instance.playersAndBots[0];
-
+    GameController.instance.EndOfTour += ButtonActiveControl;
     HideBettingButtons();
+  }
+
+  public void ButtonActiveControl()
+  {
+    callButton.gameObject.SetActive(false);
+    foldButton.gameObject.SetActive(false);
+    checkButton.gameObject.SetActive(false);
+    raiseButton.gameObject.SetActive(false);
   }
 
   public void ShowBettingButtons()
