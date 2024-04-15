@@ -223,7 +223,7 @@ public class GameController : MonoBehaviour
     // Increase the bet round index of the current player
     currentPlayer.betRoundIndex++;
 
-    // Update UI after bot's decision
+    // Update UI after bot decision
     UIManager.instance.UpdatePlayerUI(currentPlayer);
   }
 
