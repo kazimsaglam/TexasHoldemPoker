@@ -1,4 +1,4 @@
-﻿using Database;
+﻿using Game;
 using TMPro;
 using UnityEngine;
 
@@ -15,9 +15,6 @@ namespace MainMenu
     [SerializeField]
     private TextMeshProUGUI statisticsText;
 
-    public string totalGameCount { get; set; }
-    public string winCount { get; set; }
-
     public static ProfilePageManager Instance { get; set; }
 
     private void Awake()
@@ -32,20 +29,16 @@ namespace MainMenu
       }
     }
 
-    private async void Start()
+    private void Start()
     {
-      totalGameCount = await FirebaseAuthManager.Instance
-        .GetWinOrTotalGameCount("totalGameCount");
-      totalText.text = totalGameCount;
+      totalText.text = PlayerManager.Instance.totalGameCount;
 
-      winCount = await FirebaseAuthManager.Instance
-        .GetWinOrTotalGameCount("win");
-      winText.text = winCount;
+      winText.text = PlayerManager.Instance.winCount;
 
       // Fetch the full name
 
-      int wins = int.Parse(winCount);
-      int totalCount = int.Parse(totalGameCount);
+      int wins = int.Parse(PlayerManager.Instance.winCount);
+      int totalCount = int.Parse(PlayerManager.Instance.totalGameCount);
 
       float winStatistics = (float)wins / totalCount * 100f;
       string formattedWinStatistics = winStatistics.ToString("F2");

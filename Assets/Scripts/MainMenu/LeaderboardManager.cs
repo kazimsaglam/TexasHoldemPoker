@@ -2,7 +2,6 @@
 using Database;
 using Firebase.Database;
 using Firebase.Extensions;
-using UI;
 using UnityEngine;
 
 namespace MainMenu

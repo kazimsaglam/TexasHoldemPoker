@@ -1,9 +1,8 @@
 using Database;
 using Game;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using UnityEngine.Serialization;
 
 public class UIManager : MonoBehaviour
 {
@@ -74,26 +73,27 @@ public class UIManager : MonoBehaviour
 
     for (int i = 1; i >= 0; i--)
     {
-      _cardDealerAnim.AnimateFoldCardDeal(_mainPlayer.hand[i].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+      _cardDealerAnim.AnimateFoldCardDeal(_mainPlayer.hand[i].gameObject,
+        GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
     }
 
     _mainPlayer.ClearHand();
     _mainPlayer.ClearBets();
 
-    // Sýradaki oyuncuya geçin
     IsBettingButtonActive();
   }
 
   public void Call()
   {
-    // Mevcut bahis kontrolü
+    // Current bet control
     int currentBet = GameController.instance.currentBet;
 
-    // Bahsi kabul edin ve paradan düþürün
+    // Accept the bet and decrease the player's money.
     _mainPlayer.betAmount = currentBet;
     _mainPlayer.money -= currentBet;
     PlayerManager.Instance.playerMoney -= currentBet;
     FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
+    Debug.Log(PlayerManager.Instance.playerMoney);
     GameController.instance.AddToCurrentBet(currentBet);
 
     UpdatePlayerUI(_mainPlayer);
@@ -102,28 +102,24 @@ public class UIManager : MonoBehaviour
 
     HideBettingButtons();
 
-    // Sýradaki oyuncuya geçin
+    // Go to the next player
     IsBettingButtonActive();
   }
 
   public void Raise()
   {
-    // InputField'ý aktif hale getirin
+    // Activate the input field
     raiseAmountInput.gameObject.SetActive(true);
 
-    // Enter tuþuna basýlmasýný dinleyin
     raiseAmountInput.onEndEdit.AddListener(OnRaiseAmountInputEndEdit);
 
-    // Raise butonuna basýlmasýný dinleyin
     raiseButton.onClick.AddListener(OnRaiseButtonClick);
   }
 
   private void OnRaiseAmountInputEndEdit(string text)
   {
-    // Enter tuþuna basýldýysa
     if (Input.GetKeyDown(KeyCode.Return) && !string.IsNullOrEmpty(raiseAmountInput.text))
     {
-      // Ýþlemi tamamlayýn
       ProcessRaise();
     }
   }
@@ -132,102 +128,80 @@ public class UIManager : MonoBehaviour
   {
     if (!string.IsNullOrEmpty(raiseAmountInput.text))
     {
-      // Ýþlemi tamamlayýn
       ProcessRaise();
     }
   }
 
   private void ProcessRaise()
   {
-    // Girilen deðeri int'e dönüþtürün
     int raiseAmount = int.Parse(raiseAmountInput.text);
 
-    // Bahsi yükseltin ve paradan düþürün
+    // raise the bet
     _mainPlayer.betAmount = raiseAmount;
     _mainPlayer.money -= raiseAmount;
     PlayerManager.Instance.playerMoney -= raiseAmount;
     FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
+    Debug.Log(PlayerManager.Instance.playerMoney);
 
-    // Mevcut bahsi güncelleyin
+    // Update the current bet
     GameController.instance.AddToCurrentBet(raiseAmount);
     UpdatePot(raiseAmount);
 
-    // UI'yi güncelleyin
     UpdatePlayerUI(_mainPlayer);
-
     HideBettingButtons();
 
-    // Sýradaki oyuncuya geçin
+    // Go to the next player
     IsBettingButtonActive();
   }
 
   public void AllIn()
   {
-    // Tüm parayý bahis olarak yatýrýn
+    // Put all your money in.
     int raiseAmount = _mainPlayer.money;
 
-    // Bahsi yükseltin ve paradan düþürün
     _mainPlayer.betAmount = raiseAmount;
     _mainPlayer.money -= raiseAmount;
     PlayerManager.Instance.playerMoney -= raiseAmount;
     FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
+    Debug.Log(PlayerManager.Instance.playerMoney);
 
-    // Mevcut bahsi güncelleyin
+    // MUpdate the current bet
     GameController.instance.AddToCurrentBet(raiseAmount);
     UpdatePot(raiseAmount);
 
-    // UI'yi güncelleyin
     UpdatePlayerUI(_mainPlayer);
-
-    // InputField'ý temizleyin
     raiseAmountInput.text = "";
-
     HideBettingButtons();
 
-    // Sýradaki oyuncuya geçin
+    // Go to the next player
     IsBettingButtonActive();
   }
 
 
   public void Check()
   {
-    // Mevcut bahsi kontrol edin
+    // Check the current bet.
     int currentBet = GameController.instance.currentBet;
 
-    // Bahis 0 ise check yapamazsýnýz
+    // If the current bet is 0, you can't check.
     if (currentBet == 0)
     {
       Debug.Log("You should make bet.");
       return;
     }
 
-    // Bahsi kabul edin
     _mainPlayer.betAmount = currentBet;
 
-    // UI'yi güncelleyin
     UpdatePlayerUI(_mainPlayer);
 
     HideBettingButtons();
 
-    // Sýradaki oyuncuya geçin
+    // Go to the next player
     IsBettingButtonActive();
   }
 
   public bool IsBettingButtonActive()
   {
-    // Butonlarýn aktiflik durumunu kontrol edin
-    if (callButton.interactable || foldButton.interactable)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    return callButton.interactable || foldButton.interactable;
   }
-
-
-  //betAmount: Oyuncunun bahis turunda yatýrdýðý toplam bahis miktarýný temsil eder.
-  //Bir oyuncu check yaparsa, betAmount deðiþmez.
-  //Bir oyuncu call veya raise yaparsa, betAmount yeni bahis miktarýna güncellenir.
 }

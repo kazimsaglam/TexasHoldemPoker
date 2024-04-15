@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Database;
 using Game;
-using MainMenu;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum GameState
 {
@@ -40,6 +41,8 @@ public class GameController : MonoBehaviour
 
   private DeckManager _deckManager;
 
+  public List<Player> winners;
+  public event Action EndOfTour;
 
   private void Awake()
   {
@@ -55,7 +58,8 @@ public class GameController : MonoBehaviour
     StartGame();
   }
 
-  void CreatePlayers()
+
+  private void CreatePlayers()
   {
     playersAndBots = new List<Player>();
 
@@ -75,7 +79,7 @@ public class GameController : MonoBehaviour
         playerOrBot = Instantiate(botPrefab, _deckManager.placeholderPlayerHands[i]
           .transform.position, Quaternion.identity, _deckManager.placeholderPlayerHands[i].transform);
         Player bot = playerOrBot.GetComponent<BotPlayer>();
-        bot.SetPlayer($"Bot {(i)}", botStartingMoney, PlayerType.Bot);
+        bot.SetPlayer($"Bot {i}", botStartingMoney, PlayerType.Bot);
         playersAndBots.Add(bot);
       }
     }
@@ -105,11 +109,9 @@ public class GameController : MonoBehaviour
     {
       player.ClearBets();
       player.hand.Clear();
-
       UIManager.instance.UpdatePlayerUI(player);
     }
 
-    // Start game
     _gameState = GameState.PreFlop;
     UpdateGameState();
   }
@@ -119,49 +121,35 @@ public class GameController : MonoBehaviour
     switch (_gameState)
     {
       case GameState.PreFlop:
-        // Oyunculara kart daðýt
         _deckManager.DealPlayerHands();
-
-        // Bahis turunu baþlat
         StartCoroutine(StartBettingRound());
         break;
 
       case GameState.Flop:
-        // Masaya 3 kart daðýt
         _deckManager.DealBoardCards();
-
-        // Tüm oyunculara sýrayla bahis yaptýr
         StartCoroutine(ProcessBettingRound());
         break;
 
       case GameState.Turn:
-        // Masaya 4. kartý daðýt
         _deckManager.DealBoardCards();
-
-        // Tüm oyunculara sýrayla bahis yaptýr
         StartCoroutine(ProcessBettingRound());
         break;
 
       case GameState.River:
-        // Masaya 5. kartý daðýt
         _deckManager.DealBoardCards();
-
-        // Tüm oyunculara sýrayla bahis yaptýr
         StartCoroutine(ProcessBettingRound());
         break;
 
       case GameState.Showdown:
-        // Her oyuncunun el deðerini hesapla
         EvaluateHands();
+        EndOfTourPanel.instance.CardInfo();
+        EndOfTour?.Invoke();
+        // Determine the winner
+        //Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
 
-        // Kazananý belirle
-        // Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
+        //// Give the pot to the winner
+        //winner.money += pot;
 
-        // Kazanan oyuncuya pot'u ver
-        // winner.money += pot;
-        EndGame();
-
-        // Oyunun sonucunu göster
         break;
     }
   }
@@ -204,7 +192,6 @@ public class GameController : MonoBehaviour
       NextPlayer();
     } while (currentPlayer.betRoundIndex != 2);
 
-    // Bahis turu tamamlandýðýnda devam eden iþlemleri gerçekleþtir
     _gameState++;
     UpdateGameState();
   }
@@ -220,7 +207,7 @@ public class GameController : MonoBehaviour
 
       while (UIManager.instance.IsBettingButtonActive())
       {
-        // Oyuncunun bahis yapmasýný bekleyin
+        // Wait for player bet
         yield return null;
       }
     }
@@ -252,26 +239,12 @@ public class GameController : MonoBehaviour
     currentPlayerIndex = Random.Range(0, playersAndBots.Count);
     Player smallBlindPlayer = playersAndBots[currentPlayerIndex];
     smallBlindPlayer.MakeBet(_smallBlind);
-    if (smallBlindPlayer.playerType == PlayerType.Player)
-    {
-      PlayerManager.Instance.playerMoney -= _smallBlind;
-      Debug.Log(PlayerManager.Instance.playerMoney);
-      FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
-    }
-
     UIManager.instance.UpdatePlayerUI(smallBlindPlayer);
 
     // Big blind
     currentPlayerIndex = (currentPlayerIndex + 1) % playersAndBots.Count;
     Player bigBlindPlayer = playersAndBots[currentPlayerIndex];
     bigBlindPlayer.MakeBet(_bigBlind);
-    if (bigBlindPlayer.playerType == PlayerType.Player)
-    {
-      PlayerManager.Instance.playerMoney -= _bigBlind;
-      Debug.Log(PlayerManager.Instance.playerMoney);
-      FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
-    }
-
     UIManager.instance.UpdatePlayerUI(bigBlindPlayer);
 
     NextPlayer();
@@ -280,36 +253,70 @@ public class GameController : MonoBehaviour
 
   private void EvaluateHands()
   {
-    // Tüm oyuncularýn ellerini deðerlendir
     foreach (Player player in playersAndBots)
     {
       player.CompareHand(_deckManager.boardCards);
     }
+
+    int maxHandValue = playersAndBots.Max(player => player.handValue);
+
+    List<Player> tiedPlayers = playersAndBots.Where(player => player.handValue == maxHandValue).ToList();
+    Debug.Log("Equal strength player count:" + tiedPlayers.Count);
+    if (tiedPlayers.Count > 1)
+    {
+      Player winningPlayer = tiedPlayers[0];
+      foreach (Player player in tiedPlayers)
+      {
+        int compareResult = player.CompareHighestCard(winningPlayer);
+        if (compareResult > 0)
+        {
+          winningPlayer = player;
+        }
+      }
+
+      Debug.Log("Winner's hand strength: " + winningPlayer.playerName);
+      EndGame(winningPlayer);
+    }
+    else
+    {
+      Player winner = playersAndBots.OrderByDescending(player => player.handValue).First();
+      EndGame(winner);
+    }
   }
 
 
-  public void EndGame()
+  public void EndGame(Player winner)
   {
-    // Kazanan oyuncuyu belirle
-    Player winnerPlayer = playersAndBots[0];
-
-    // Kazananýn potu almasýný saðla
-    winnerPlayer.money += pot;
-    if (winnerPlayer.playerType == PlayerType.Player)
+    winners.Add(winner);
+    if (winner.playerType == PlayerType.Player)
     {
       PlayerManager.Instance.playerMoney += pot;
       Debug.Log(PlayerManager.Instance.playerMoney);
       FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
+      int winCount = int.Parse(PlayerManager.Instance.winCount);
+      FirebaseAuthManager.Instance.UpdateWinCount(winCount);
+      int gameCount = int.Parse(PlayerManager.Instance.totalGameCount);
+      FirebaseAuthManager.Instance.UpdateGameCount(gameCount);
     }
+    else
+    {
+      int gameCount = int.Parse(PlayerManager.Instance.totalGameCount);
+      FirebaseAuthManager.Instance.UpdateGameCount(gameCount);
+    }
+
+
+    // Kazanan oyuncuyu belirle
+    //Player winnerPlayer = playersAndBots[0];
+
 
     // Oyun sonucunu göster
     //UIManager.instance.ShowEndGameUI(winnerPlayer);
 
     // Reset the game state
-    ResetGame();
+    //ResetGame();
 
     // Start the next game
-    StartGame();
+    //StartGame();
   }
 
   void ResetGame()
