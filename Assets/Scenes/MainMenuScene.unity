@@ -3746,7 +3746,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1822300498}
         m_TargetAssemblyTypeName: UI.MainMenuUIManager, Assembly-CSharp
-        m_MethodName: OnOpenGameScene
+        m_MethodName: OnOpenInGameScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
