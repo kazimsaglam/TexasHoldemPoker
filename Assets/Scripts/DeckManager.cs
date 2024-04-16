@@ -132,5 +132,6 @@ public class DeckManager : MonoBehaviour
   private void AnimateCardDeal(GameObject cardObject, Vector3 targetPosition)
   {
     _cardDealerAnim.AnimateCardDeal(cardObject, targetPosition);
+        SoundManager.instance.PlayCardDealSound();
   }
 }
