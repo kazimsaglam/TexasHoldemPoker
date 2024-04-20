@@ -9,6 +9,10 @@ namespace Game
     public string playerName { get; set; }
     public int playerMoney { get; set; }
 
+    public string currentExp { get; set; }
+
+    public string maxExp { get; set; }
+    public string currentLevel { get; set; }
     public string totalGameCount { get; set; }
     public string winCount { get; set; }
     public static PlayerManager Instance { get; set; }
@@ -22,7 +26,12 @@ namespace Game
 
       winCount = await FirebaseAuthManager.Instance
         .GetWinOrTotalGameCount("win");
-      Debug.Log(playerMoney);
+
+      //Get user's current experience point
+      currentExp = await FirebaseAuthManager.Instance.GetExperience();
+
+      //Get Player's Level
+      currentLevel = await FirebaseAuthManager.Instance.GetLevel();
     }
 
     private void Awake()

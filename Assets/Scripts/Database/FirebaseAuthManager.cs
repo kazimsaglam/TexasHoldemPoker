@@ -298,7 +298,9 @@ namespace Database
         money = money,
         id = userId,
         win = wins,
-        totalGameCount = totalCount
+        totalGameCount = totalCount,
+        currentExp = 0,
+        currentLevel = 0
       };
 
       string json = JsonUtility.ToJson(userData);
@@ -358,6 +360,96 @@ namespace Database
         else
         {
           return "Full name not found for the user";
+        }
+      }
+      else
+      {
+        return "User not authenticated";
+      }
+    }
+
+    public async Task<string> GetExperience()
+    {
+      if (_auth.CurrentUser != null)
+      {
+        string userId = _auth.CurrentUser.UserId;
+
+        DataSnapshot snapshot = await _databaseReference.Child("userData")
+          .Child(userId).Child("currentExp").GetValueAsync();
+
+        if (snapshot.Exists)
+        {
+          return snapshot.Value.ToString();
+        }
+        else
+        {
+          return "Data not found for the user";
+        }
+      }
+      else
+      {
+        return "User not authenticated";
+      }
+    }
+
+    public void UpdateExperience(int newExperience)
+    {
+      if (_databaseReference != null)
+      {
+        Task setValueTask = _databaseReference.Child("userData").Child(_auth.CurrentUser.UserId)
+          .Child("currentExp").SetValueAsync(newExperience);
+
+        Task.WhenAll(setValueTask).ContinueWithOnMainThread(task =>
+        {
+          if (task.IsFaulted || task.IsCanceled)
+          {
+            Debug.LogError("Failed to update experience");
+          }
+          else
+          {
+            Debug.Log("Experience updated successfully");
+          }
+        });
+      }
+    }
+
+    public void UpdateLevel(int newLevel)
+    {
+      if (_databaseReference != null)
+      {
+        Task setValueTask = _databaseReference.Child("userData").Child(_auth.CurrentUser.UserId)
+          .Child("currentLevel").SetValueAsync(newLevel);
+
+        Task.WhenAll(setValueTask).ContinueWithOnMainThread(task =>
+        {
+          if (task.IsFaulted || task.IsCanceled)
+          {
+            Debug.LogError("Failed to update level");
+          }
+          else
+          {
+            Debug.Log("Level updated successfully");
+          }
+        });
+      }
+    }
+
+    public async Task<string> GetLevel()
+    {
+      if (_auth.CurrentUser != null)
+      {
+        string userId = _auth.CurrentUser.UserId;
+
+        DataSnapshot snapshot = await _databaseReference.Child("userData")
+          .Child(userId).Child("currentLevel").GetValueAsync();
+
+        if (snapshot.Exists)
+        {
+          return snapshot.Value.ToString();
+        }
+        else
+        {
+          return "Data not found for the user";
         }
       }
       else
@@ -466,6 +558,8 @@ namespace Database
     public string id;
     public int win;
     public int totalGameCount;
+    public int currentExp;
+    public int currentLevel;
   }
 
   [Serializable]
