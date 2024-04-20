@@ -292,6 +292,11 @@ public class GameController : MonoBehaviour
     winners.Add(winner);
     //Update experience, check max exp. If user reaches to the max experience, update the level.
     int currentExperience = int.Parse(PlayerManager.Instance.currentExp);
+    //Get the level
+    _currentLevel = int.Parse(PlayerManager.Instance.currentLevel);
+    _maxExperience = LevelData.RequiredExperiencePerLevel[_currentLevel];
+    int gameCount = int.Parse(PlayerManager.Instance.totalGameCount);
+    Debug.Log("Max. exp. for level " + _currentLevel + " is " + _maxExperience);
 
     if (winner.playerType == PlayerType.Player)
     {
@@ -303,43 +308,38 @@ public class GameController : MonoBehaviour
       FirebaseAuthManager.Instance.UpdateWinCount(winCount);
 
       //Update game count
-      int gameCount = int.Parse(PlayerManager.Instance.totalGameCount);
+
       gameCount++;
       FirebaseAuthManager.Instance.UpdateGameCount(gameCount);
 
-      //Get the level
-      _currentLevel = int.Parse(PlayerManager.Instance.currentLevel);
-      _maxExperience = LevelData.RequiredExperiencePerLevel[_currentLevel];
-      Debug.Log("Max. exp. for level " + _currentLevel + " is " + _maxExperience);
-
+      //Update Experience
       currentExperience += WinExp;
-      if (currentExperience >= _maxExperience)
-      {
-        currentExperience -= _maxExperience;
-        FirebaseAuthManager.Instance.UpdateExperience(currentExperience);
-        _currentLevel++;
-        FirebaseAuthManager.Instance.UpdateLevel(_currentLevel);
-      }
-      else
-      {
-        FirebaseAuthManager.Instance.UpdateExperience(currentExperience);
-      }
+      CheckUpdateLevelConditions(currentExperience);
     }
     else
     {
-      int gameCount = int.Parse(PlayerManager.Instance.totalGameCount);
       gameCount++;
-      FirebaseAuthManager.Instance.UpdateGameCount(gameCount);
-
       currentExperience += LoseExp;
 
-      if (currentExperience >= _maxExperience)
-      {
-        currentExperience -= _maxExperience;
-        FirebaseAuthManager.Instance.UpdateExperience(currentExperience);
-        _currentLevel++;
-        FirebaseAuthManager.Instance.UpdateLevel(_currentLevel);
-      }
+      FirebaseAuthManager.Instance.UpdateGameCount(gameCount);
+
+      CheckUpdateLevelConditions(currentExperience);
+    }
+  }
+
+  public void CheckUpdateLevelConditions(int currentExperience)
+  {
+    if (currentExperience >= _maxExperience)
+    {
+      currentExperience -= _maxExperience;
+      _currentLevel++;
+
+      FirebaseAuthManager.Instance.UpdateExperience(currentExperience);
+      FirebaseAuthManager.Instance.UpdateLevel(_currentLevel);
+    }
+    else
+    {
+      FirebaseAuthManager.Instance.UpdateExperience(currentExperience);
     }
   }
 }

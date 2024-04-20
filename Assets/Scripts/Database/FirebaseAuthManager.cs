@@ -521,7 +521,7 @@ namespace Database
           }
           else
           {
-            Debug.Log("Updated successfully");
+            Debug.Log("Win Count Updated successfully");
           }
         });
       }
@@ -543,7 +543,7 @@ namespace Database
           }
           else
           {
-            Debug.Log("Updated successfully");
+            Debug.Log("Game Count Updated successfully");
           }
         });
       }
