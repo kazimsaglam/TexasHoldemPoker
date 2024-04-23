@@ -1,5 +1,6 @@
 using Database;
 using Game;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,8 +19,11 @@ public class UIManager : MonoBehaviour
 
     public TextMeshProUGUI potText;
 
-    private Player _mainPlayer;
+    private Player _mainPlayer; //Kazým deðiþiklik yapýldý.
+    public List<Player> playerlist;
     private CardDealerAnimation _cardDealerAnim;
+    int numberOfFoldPlayers;
+
 
     private void Awake()
     {
@@ -29,7 +33,8 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         _cardDealerAnim = GetComponent<CardDealerAnimation>();
-        _mainPlayer = GameController.instance.playersAndBots[0];
+        playerlist = GameController.instance.playersAndBots;
+        //_mainPlayer = GameController.instance.playersAndBots[0];
         GameController.instance.EndOfTour += ButtonActiveControl;
         HideBettingButtons();
     }
@@ -75,24 +80,53 @@ public class UIManager : MonoBehaviour
 
     public void Fold()
     {
-        _mainPlayer.isFolded = true;
+
+        if (playerlist[GameController.currentPlayerIndex].isFolded && numberOfFoldPlayers < 2)
+
+        {
+            _cardDealerAnim.AnimateFoldCardDeal(playerlist[GameController.currentPlayerIndex].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+
+            playerlist[GameController.currentPlayerIndex].ClearBets();
+
+            numberOfFoldPlayers += 1;
+            Debug.Log("Number of fold players: " + numberOfFoldPlayers);
+            IsBettingButtonActive();
+        }
+        else if (numberOfFoldPlayers == 2)
+        {// Oyunda iki kiþinin kalmasý için
+            playerlist[GameController.currentPlayerIndex].isFolded = false;
+            Call();
+            Debug.Log("Fold çalýþmaLý...Call çalýþtý");
+        }
+        //_mainPlayer.isFolded = true;
+
+        //HideBettingButtons();
+
+        //for (int i = 1; i >= 0; i--)
+        //{
+        //    _cardDealerAnim.AnimateFoldCardDeal(_mainPlayer.hand[i].gameObject,
+        //      GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+        //}
+
+        //_mainPlayer.ClearHand();
+        //_mainPlayer.ClearBets();
+
+        //_mainPlayer.ShowPlayerAction("Fold");
+        //SoundManager.instance.PlayFoldSound();
+
+        //// Go to the next player
+        //IsBettingButtonActive();
+    }
+    public void PlayerFoldButton()
+    {
+        playerlist[0].isFolded = true;
+        _cardDealerAnim.AnimateFoldCardDeal(playerlist[0].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+        playerlist[0].ClearBets();
+        numberOfFoldPlayers = +1;
 
         HideBettingButtons();
+        //daha düzgün yazýlabilir
 
-        for (int i = 1; i >= 0; i--)
-        {
-            _cardDealerAnim.AnimateFoldCardDeal(_mainPlayer.hand[i].gameObject,
-              GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
-        }
-
-        _mainPlayer.ClearHand();
-        _mainPlayer.ClearBets();
-
-        _mainPlayer.ShowPlayerAction("Fold");
-        SoundManager.instance.PlayFoldSound();
-
-        // Go to the next player
-        IsBettingButtonActive();
     }
 
     public void Call()
@@ -100,24 +134,26 @@ public class UIManager : MonoBehaviour
         // Current bet control
         int currentBet = GameController.instance.currentBet;
 
-        if (_mainPlayer.money <= currentBet)
+        if (playerlist[GameController.currentPlayerIndex].money <= currentBet)
         {
             AllIn();
             return;
         }
 
         // Accept the bet and decrease the player's money.
-        _mainPlayer.betAmount += currentBet;
-        _mainPlayer.money -= currentBet;
+        playerlist[GameController.currentPlayerIndex].betAmount = currentBet;
+        playerlist[GameController.currentPlayerIndex].money -= currentBet;
+        //_mainPlayer.betAmount += currentBet;
+        //_mainPlayer.money -= currentBet;
         PlayerManager.Instance.playerMoney -= currentBet;
         FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
         Debug.Log(PlayerManager.Instance.playerMoney);
         GameController.instance.AddToCurrentBet(currentBet);
 
         UpdatePot(currentBet);
-        UpdatePlayerUI(_mainPlayer);
+        UpdatePlayerUI(playerlist[GameController.currentPlayerIndex]);
 
-        _mainPlayer.ShowPlayerAction("Call");
+        playerlist[GameController.currentPlayerIndex].ShowPlayerAction("Call");
         SoundManager.instance.PlayCallAndRaiseSound();
 
         HideBettingButtons();

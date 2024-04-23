@@ -53,8 +53,8 @@ public class CardDealerAnimation : MonoBehaviour
         }
 
         card.transform.position = targetPos;
-
-        Destroy(card);
+        card.SetActive(false);
+        //Destroy(card);
     }
     IEnumerator AnimateWinnerCardMovement(Player winnerCard, Vector3 targetPos)
     {

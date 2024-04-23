@@ -2227,7 +2227,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7805344352802770272}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: Fold
+        m_MethodName: PlayerFoldButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4043,9 +4043,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endOfTourPanel: {fileID: 7477231091246510857}
-  Players: []
+  players: []
   playerObjects: []
-  TourWinner: []
+  tourWinner: []
   textPosition:
   - {fileID: 1063219840551821735}
   - {fileID: 1017619968063623805}
