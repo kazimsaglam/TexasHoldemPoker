@@ -54,13 +54,13 @@ public class BotPlayer : Player
         }
         else if (botStraight == 1)
         {
-            karar = Random.Range(3, 4);
+            karar = Random.Range(2, 4);
             Debug.Log("Player; " + playerName + " / Medium bot kararý: " + karar);
 
         }
         else if (botStraight > 2)
         {
-            karar = Random.Range(5, 9);
+            karar = Random.Range(4, 9);
             Debug.Log("Player; " + playerName + " / Medium bot kararý: " + karar);
 
         }
@@ -84,12 +84,12 @@ public class BotPlayer : Player
         else if (botStraight == 1)
         {
 
-            karar = Random.Range(3, 4);
+            karar = Random.Range(2, 4);
             Debug.Log("Player; " + playerName + " / Hard bot karar: " + karar);
         }
         else if (botStraight > 2)
         {
-            karar = Random.Range(5, 9);
+            karar = Random.Range(4, 9);
             Debug.Log("Player; " + playerName + " / Hard bot karar: " + karar);
         }
         else if (botStraight > 3)
@@ -98,6 +98,7 @@ public class BotPlayer : Player
             Debug.Log("Player; " + playerName + " / Easy bot karar: " + karar);
         }
     }
+
     public void MakeDecision(int currentBet = 0, int pot = 0)
     {
         if (botsPower < 3)
@@ -126,28 +127,9 @@ public class BotPlayer : Player
             UIManager.instance.Fold();
             Debug.Log(playerName + " / Fold çalýþtý. Karar: " + karar);
         }
-        else if (ShouldCheck(currentBet, pot, karar))
-        {
-            // Check
-            if (State != GameState.PreFlop)
-            {
-                BotCheck();
-                Debug.Log("Player; " + playerName + " / Check çalýþtý. Karar: " + karar);
-            }
-            else
-            {
-                BotCall(currentBet, pot); 
-                UIManager.instance.Call();
-                Debug.Log(" ZORUNLU " + "Player; " + playerName + " / Call çalýþtý. Karar: " + karar);
-            }
-
-        }
         else if (ShouldCall(currentBet, pot, karar))
         {
-            // Call
-            //betAmount = GameController.instance.currentBet;??
-            BotCall(currentBet, pot); //
-            UIManager.instance.Call();
+            BotCall();
             Debug.Log("Player; " + playerName + " / Call çalýþtý. Karar: " + karar);
 
         }
@@ -155,7 +137,7 @@ public class BotPlayer : Player
         {
             // Raise
             int raiseAmount = Mathf.Clamp(currentBet + 20, 20, 200);
-            betAmount = raiseAmount;
+            betAmount += raiseAmount;
             BotRaise(raiseAmount);
             Debug.Log("Player; " + playerName + " / Raise çalýþtý. Karar; " + karar);
 
@@ -167,12 +149,6 @@ public class BotPlayer : Player
     {
         // El zayýfsa ve bahis yüksekse fold et
         return currentBet > pot / 4 && karar <= 2;
-    }
-
-    bool ShouldCheck(int currentBet, int pot, int karar)
-    {
-        // El orta seviyedeyse ve bahis makul ise check et
-        return currentBet <= pot / 2 && karar <= 4 || karar >= 3;
     }
 
     bool ShouldCall(int currentBet, int pot, int karar)
@@ -190,22 +166,15 @@ public class BotPlayer : Player
     public void BotFold()
     {
         isFolded = true;
+
+        ShowPlayerAction("Fold");
+        SoundManager.instance.PlayFoldSound();
     }
 
-    protected void BotCheck()
-    {
-        // Skip betting
-        if (GameController.instance.minimumBet >= money)
-        {
-            // If the highest bet on the table is equal or smaller than the minimum bet, player can check.
-            money -= GameController.instance.minimumBet;
-            GameController.instance.pot += GameController.instance.minimumBet;
-        }
-    }
-
-    public void BotCall(int currentBet, int karar)
+    public void BotCall()
     {
         int callAmount = Mathf.Min(GameController.instance.currentBet, money);
+        ShowPlayerAction("Call");
         MakeBet(callAmount);
     }
 
@@ -213,6 +182,7 @@ public class BotPlayer : Player
     {
         // Raise the bet.
         int raiseAmount = Mathf.Min(amount, money);
+        ShowPlayerAction($"RaIse: {raiseAmount}");
         MakeBet(raiseAmount);
     }
 }

@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
 
     public void MakeBet(int amount)
     {
-        betAmount = amount;
+        betAmount += amount;
         money -= amount;
         UIManager.instance.UpdatePot(amount);
         GameController.instance.AddToCurrentBet(amount);
@@ -61,8 +61,6 @@ public class Player : MonoBehaviour
             Debug.Log(PlayerManager.Instance.playerMoney);
             FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
         }
-
-        ShowPlayerAction("Call");
 
         SoundManager.instance.PlayCallAndRaiseSound();
     }

@@ -11,7 +11,6 @@ public class UIManager : MonoBehaviour
 
     [Header("BUTTONS")]
     public Button foldButton;
-    public Button checkButton;
     public Button callButton;
     public Button raiseButton;
     public Button allInButton;
@@ -19,7 +18,7 @@ public class UIManager : MonoBehaviour
 
     public TextMeshProUGUI potText;
 
-    private Player _mainPlayer; //Kazým deðiþiklik yapýldý.
+    private Player _mainPlayer;
     public List<Player> playerlist;
     private CardDealerAnimation _cardDealerAnim;
     int numberOfFoldPlayers;
@@ -34,7 +33,7 @@ public class UIManager : MonoBehaviour
     {
         _cardDealerAnim = GetComponent<CardDealerAnimation>();
         playerlist = GameController.instance.playersAndBots;
-        //_mainPlayer = GameController.instance.playersAndBots[0];
+        _mainPlayer = GameController.instance.playersAndBots[0];
         GameController.instance.EndOfTour += ButtonActiveControl;
         HideBettingButtons();
     }
@@ -43,7 +42,6 @@ public class UIManager : MonoBehaviour
     {
         callButton.gameObject.SetActive(false);
         foldButton.gameObject.SetActive(false);
-        checkButton.gameObject.SetActive(false);
         raiseButton.gameObject.SetActive(false);
     }
 
@@ -58,7 +56,6 @@ public class UIManager : MonoBehaviour
     {
         foldButton.interactable = false;
         callButton.interactable = false;
-        checkButton.interactable = false;
         raiseButton.interactable = false;
         raiseAmountInput.gameObject.SetActive(false);
     }
@@ -80,7 +77,6 @@ public class UIManager : MonoBehaviour
 
     public void Fold()
     {
-
         if (playerlist[GameController.currentPlayerIndex].isFolded && numberOfFoldPlayers < 2)
 
         {
@@ -98,24 +94,6 @@ public class UIManager : MonoBehaviour
             Call();
             Debug.Log("Fold çalýþmaLý...Call çalýþtý");
         }
-        //_mainPlayer.isFolded = true;
-
-        //HideBettingButtons();
-
-        //for (int i = 1; i >= 0; i--)
-        //{
-        //    _cardDealerAnim.AnimateFoldCardDeal(_mainPlayer.hand[i].gameObject,
-        //      GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
-        //}
-
-        //_mainPlayer.ClearHand();
-        //_mainPlayer.ClearBets();
-
-        //_mainPlayer.ShowPlayerAction("Fold");
-        //SoundManager.instance.PlayFoldSound();
-
-        //// Go to the next player
-        //IsBettingButtonActive();
     }
     public void PlayerFoldButton()
     {
@@ -124,9 +102,10 @@ public class UIManager : MonoBehaviour
         playerlist[0].ClearBets();
         numberOfFoldPlayers = +1;
 
-        HideBettingButtons();
-        //daha düzgün yazýlabilir
+        _mainPlayer.ShowPlayerAction("Fold");
+        SoundManager.instance.PlayFoldSound();
 
+        HideBettingButtons();
     }
 
     public void Call()
@@ -141,10 +120,9 @@ public class UIManager : MonoBehaviour
         }
 
         // Accept the bet and decrease the player's money.
-        playerlist[GameController.currentPlayerIndex].betAmount = currentBet;
+        playerlist[GameController.currentPlayerIndex].betAmount += currentBet;
         playerlist[GameController.currentPlayerIndex].money -= currentBet;
-        //_mainPlayer.betAmount += currentBet;
-        //_mainPlayer.money -= currentBet;
+
         PlayerManager.Instance.playerMoney -= currentBet;
         FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
         Debug.Log(PlayerManager.Instance.playerMoney);
@@ -244,31 +222,6 @@ public class UIManager : MonoBehaviour
         _mainPlayer.ShowPlayerAction("All In");
         SoundManager.instance.PlayCallAndRaiseSound();
         raiseAmountInput.text = "";
-
-        HideBettingButtons();
-
-        // Go to the next player
-        IsBettingButtonActive();
-    }
-
-
-    public void Check()
-    {
-        // Check the current bet.
-        int currentBet = GameController.instance.currentBet;
-
-        // If the current bet is 0, you can't check.
-        if (currentBet == 0)
-        {
-            Debug.Log("You should make bet.");
-            return;
-        }
-
-        _mainPlayer.betAmount = currentBet;
-
-        UpdatePlayerUI(_mainPlayer);
-        _mainPlayer.ShowPlayerAction("Check");
-        SoundManager.instance.PlayCheckSound();
 
         HideBettingButtons();
 

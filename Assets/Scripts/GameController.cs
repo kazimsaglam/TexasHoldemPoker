@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UI;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -25,13 +26,12 @@ public class GameController : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject botPrefab;
 
-    public int playerStartingMoney = 1000;
-    public int botStartingMoney = 500;
+    public int botStartingMoney = 1500;
 
     public int numPlayers;
     public static int currentPlayerIndex;
 
-    public int minimumBet = 20;
+    public int minimumBet = 1;
     public int currentBet;
     public int pot;
 
@@ -78,7 +78,7 @@ public class GameController : MonoBehaviour
                 playerOrBot = Instantiate(playerPrefab, _deckManager.placeholderPlayerHands[i]
                   .transform.position, Quaternion.identity, _deckManager.placeholderPlayerHands[i].transform);
                 Player player = playerOrBot.GetComponent<Player>();
-                player.SetPlayer($"Player {i + 1}", playerStartingMoney, PlayerType.Player,0);
+                player.SetPlayer($"Player {i + 1}", int.Parse(MainMenuUIManager.instance.moneyAmount), PlayerType.Player,0);
                 playersAndBots.Add(player);
             }
             else // create AI bot
@@ -189,7 +189,7 @@ public class GameController : MonoBehaviour
         {
             currentPlayer = playersAndBots[currentPlayerIndex];
 
-            if (!currentPlayer.isFolded)
+            if (!currentPlayer.isFolded && currentPlayer.money != 0)
             {
                 // Handle player turn
                 yield return HandlePlayerTurn(currentPlayer);
