@@ -15,7 +15,15 @@ namespace MainMenu
     [SerializeField]
     private TextMeshProUGUI statisticsText;
 
+    [SerializeField]
+    private TextMeshProUGUI levelText;
+
+    [SerializeField]
+    private TextMeshProUGUI nameText;
+
     public static ProfilePageManager Instance { get; set; }
+
+    private float _winStatistics;
 
     private void Awake()
     {
@@ -35,13 +43,23 @@ namespace MainMenu
 
       winText.text = PlayerManager.Instance.winCount;
 
-      // Fetch the full name
+      levelText.text = PlayerManager.Instance.currentLevel;
+
+      nameText.text = "Welcome, " + PlayerManager.Instance.playerName;
 
       int wins = int.Parse(PlayerManager.Instance.winCount);
       int totalCount = int.Parse(PlayerManager.Instance.totalGameCount);
 
-      float winStatistics = (float)wins / totalCount * 100f;
-      string formattedWinStatistics = winStatistics.ToString("F2");
+      if (wins == 0 && totalCount == 0)
+      {
+        _winStatistics = 0;
+      }
+      else
+      {
+        _winStatistics = (float)wins / totalCount * 100f;
+      }
+
+      string formattedWinStatistics = _winStatistics.ToString("F2");
       statisticsText.text = formattedWinStatistics + "%";
       Debug.Log($"Win Statistics: {formattedWinStatistics}%");
     }

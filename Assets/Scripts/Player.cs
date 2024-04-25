@@ -154,7 +154,7 @@ public class Player : MonoBehaviour
             ptk.EarlyTourBotHandControl(botHandList, player);
             earlyTourBotHandValue = ptk.earlyStrenght;
 
-            Debug.Log("Ýlk tur kart kontrolü yapýldý. " + "Player; " + player.name + " , El gücü " + earlyTourBotHandValue);
+            Debug.Log("Ä°lk tur kart kontrolÃ¼ yapÄ±ldÄ±. " + "Player; " + player.name + " , El gÃ¼cÃ¼ " + earlyTourBotHandValue);
             //botHandList.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
             //Debug.Log("Bot hand list: " + string.Join(", ", botHandList.Select(card => card.cardValue.ToString())));
 
@@ -173,13 +173,13 @@ public class Player : MonoBehaviour
                 botHandList.Add(boardCards[i]);
 
             }
-            Debug.Log(gameState + " turunda kart kontrolü yapýldý. " + "Player; " + player.name + " / Hand.Count; " + botHandList.Count);
+            Debug.Log(gameState + " turunda kart kontrolÃ¼ yapÄ±ldÄ±. " + "Player; " + player.name + " / Hand.Count; " + botHandList.Count);
             PokerHand ptk = new PokerHand();
 
             ptk.BotAISetPokerHand(botHandList.ToArray());
             earlyTourBotHandValue = ptk.earlyStrenght;
             earlyTourBotHandValueString = ptk.BotAIprintResult();
-            Debug.Log("Player; " + player.name + " / El gücü: " + earlyTourBotHandValue);
+            Debug.Log("Player; " + player.name + " / El gÃ¼cÃ¼: " + earlyTourBotHandValue);
         }
     }
 }
