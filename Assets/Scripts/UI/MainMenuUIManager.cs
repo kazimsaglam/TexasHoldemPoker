@@ -1,5 +1,6 @@
 ﻿using Database;
 using Firebase.Database;
+using Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,6 +10,9 @@ namespace UI
   public class MainMenuUIManager : MonoBehaviour
   {
     public static MainMenuUIManager instance;
+
+    [HideInInspector]
+    public string moneyAmount;
 
     [SerializeField]
     private GameObject profilePanel;
@@ -27,7 +31,7 @@ namespace UI
     private async void Start()
     {
       _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-      string moneyAmount = await FirebaseAuthManager.Instance.GetMoney();
+      moneyAmount = await FirebaseAuthManager.Instance.GetMoney();
       moneyText.text = moneyAmount;
     }
 
@@ -78,5 +82,12 @@ namespace UI
     {
       FirebaseAuthManager.Instance.OnLogOut();
     }
-  }
+
+    public void MoneyHack()
+    {
+        PlayerManager.Instance.playerMoney += 2000;
+        Debug.Log(PlayerManager.Instance.playerMoney);
+        FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
+    }
+}
 }

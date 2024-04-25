@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2286012764219799914}
   - component: {fileID: 7829111767523169149}
   - component: {fileID: 5356809869009256120}
+  - component: {fileID: 279283526546315338}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -52,11 +53,14 @@ MonoBehaviour:
   playersAndBots: []
   playerPrefab: {fileID: 5976674556933541172, guid: e05581f108c2a1340bdeaca0dfad605b, type: 3}
   botPrefab: {fileID: 2148650586792177741, guid: d85861749001b2e40bfc0a8e3f0ef771, type: 3}
+  botStartingMoney: 1500
   numPlayers: 4
-  currentPlayerIndex: 0
   minimumBet: 20
   currentBet: 0
   pot: 0
+  _gameState: 0
+  winners: []
+  botPower: 0
 --- !u!114 &5021604439858486582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,12 +74,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   foldButton: {fileID: 0}
-  checkButton: {fileID: 0}
   callButton: {fileID: 0}
   raiseButton: {fileID: 0}
-  AllInButton: {fileID: 0}
+  allInButton: {fileID: 0}
   raiseAmountInput: {fileID: 0}
   potText: {fileID: 0}
+  playerlist: []
 --- !u!114 &8030203381143135348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dealDuration: 0.5
+  winnerDealDuration: 10
 --- !u!114 &7829111767523169149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,3 +283,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &279283526546315338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024516915771828910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a651d0137c91234983551702c10c6b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  endOfTourPanel: {fileID: 0}
+  players: []
+  playerObjects: []
+  tourWinner: []
+  textPosition:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  cardPosition:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
