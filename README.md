@@ -13,6 +13,12 @@ Bu proje, Unity kullanılarak geliştirilmiş, temel Texas Hold'em poker mekani�
 - **İstatistikler**: Oyun istatistikleri, Firebase kullanılarak toplanır ve kullanıcılara oyun performansları hakkında bilgi verir. Bu istatistikler, kullanıcıların oyun stratejilerini geliştirmelerine yardımcı olabilir.
 
 
+#### Gameplay Video
+https://github.com/kazimsaglam/TexasHoldemPoker/assets/140506130/0ddbbc55-be70-4cd1-bb69-5f4997cffcee
+
+
+
+
 
 #### Screenshots
 ![screenshot](https://github.com/kazimsaglam/TexasHoldemPoker/blob/main/Screenshots/ss1.png)
