@@ -369,4 +369,6 @@ public class GameController : MonoBehaviour
             FirebaseAuthManager.Instance.UpdateExperience(currentExperience);
         }
     }
+  
+
 }

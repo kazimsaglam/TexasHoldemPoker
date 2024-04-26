@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EndOfTourPanel : MonoBehaviour
 {
@@ -15,9 +17,13 @@ public class EndOfTourPanel : MonoBehaviour
     public GameObject[] players;
     public List<GameObject> playerObjects;
     public List<Player> tourWinner;
-    
+
     public List<GameObject> textPosition;
     public List<GameObject> cardPosition;
+    public GameObject placeholderBoard;
+    public TextMeshProUGUI potText;
+
+
 
 
     private void Awake()
@@ -48,7 +54,11 @@ public class EndOfTourPanel : MonoBehaviour
             playerObjects[i].SetActive(true);
             playerObjects[i].transform.GetChild(0).position = textPosition[i].transform.position;
             playerObjects[i].transform.GetChild(1).position = textPosition[i + 4].transform.position;
+            
+                
+        
         }
+
     }
 
     public IEnumerator Winners()
@@ -64,10 +74,18 @@ public class EndOfTourPanel : MonoBehaviour
     {
         _cardDealerAnimation.AnimateWinnerCardDeal(winnerCard, targetPosition);
     }
-
+    
+   
     private void HandleEndOfTour()
     {
         endOfTourPanel.SetActive(true);
         StartCoroutine(Winners());
     }
+    public void ReturnButton()
+    {
+        SceneManager.LoadScene("Scenes/InGame");
+
+    }
+
+
 }

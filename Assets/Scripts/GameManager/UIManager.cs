@@ -2,6 +2,7 @@ using Database;
 using Game;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,6 +36,10 @@ public class UIManager : MonoBehaviour
         playerlist = GameController.instance.playersAndBots;
         _mainPlayer = GameController.instance.playersAndBots[0];
         GameController.instance.EndOfTour += ButtonActiveControl;
+        GameController.instance.EndOfTour += PotTransformChange;
+        GameController.instance.EndOfTour += IsFoldedControl ;
+
+
         HideBettingButtons();
     }
 
@@ -85,6 +90,7 @@ public class UIManager : MonoBehaviour
             playerlist[GameController.currentPlayerIndex].ClearBets();
 
             numberOfFoldPlayers += 1;
+
             Debug.Log("Number of fold players: " + numberOfFoldPlayers);
             IsBettingButtonActive();
         }
@@ -92,20 +98,31 @@ public class UIManager : MonoBehaviour
         {// Oyunda iki kiþinin kalmasý için
             playerlist[GameController.currentPlayerIndex].isFolded = false;
             Call();
-            Debug.Log("Fold çalýþmaLý...Call çalýþtý");
+            Debug.Log("Fold çalýþmalý...Call çalýþtý");
         }
     }
     public void PlayerFoldButton()
     {
+        numberOfFoldPlayers += 1;
+
         playerlist[0].isFolded = true;
         _cardDealerAnim.AnimateFoldCardDeal(playerlist[0].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
         playerlist[0].ClearBets();
-        numberOfFoldPlayers = +1;
 
         _mainPlayer.ShowPlayerAction("Fold");
         SoundManager.instance.PlayFoldSound();
 
         HideBettingButtons();
+    }
+    public void IsFoldedControl()
+    {
+        for (int i = 0; i< playerlist.Count; i++)
+        {
+            if (playerlist[i].isFolded)
+            {
+               EndOfTourPanel.instance.cardPosition[i].transform.GetChild(0).gameObject.SetActive(true);
+            }
+        }
     }
 
     public void Call()
@@ -232,5 +249,9 @@ public class UIManager : MonoBehaviour
     public bool IsBettingButtonActive()
     {
         return callButton.interactable || foldButton.interactable;
+    }
+    public void PotTransformChange()
+    {
+        potText.transform.position= EndOfTourPanel.instance.potText.transform.position; 
     }
 }

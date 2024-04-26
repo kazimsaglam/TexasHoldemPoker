@@ -46,7 +46,7 @@ public class PokerHand
             cards.Add(c);
         }
 
-        if (isRoyal(cards)) return;
+        //if (isRoyal(cards)) return;
         if (isStraightFlush(cards)) return;
         if (isFourAKind(cards)) return;
         if (isFullHouse(cards)) return;
@@ -65,7 +65,7 @@ public class PokerHand
             cards.Add(c);
         }
 
-        if (isRoyal(cards) || isStraightFlush(cards) || isFourAKind(cards) || isFullHouse(cards) ||
+        if (/*isRoyal(cards) ||*/ isStraightFlush(cards) || isFourAKind(cards) || isFullHouse(cards) ||
             isFlush(cards) || isStraight(cards) || isThreeAKind(cards) || isTwoPair(cards) || isPair(cards))
         {
             return;

@@ -3,8 +3,8 @@ using UnityEngine;
 public class BotPlayer : Player
 {
     private int botStraight;
-    private int karar;
-    GameState State;
+    private int decision;
+    GameState _state;
 
 
     private void Start()
@@ -20,27 +20,23 @@ public class BotPlayer : Player
         botStraight = earlyTourBotHandValue;
         if (botStraight == 0)
         {
-            karar = Random.Range(0, 4); 
-            Debug.Log("Player; " + playerName + " / Easy bot karar: " + karar);
+            decision = Random.Range(0, 4); 
+            Debug.Log("Player; " + playerName + " / Easy bot karar: " + decision);
 
         }
         else if (botStraight == 1)
         {
-            karar = Random.Range(4, 6);
-            Debug.Log("Player; " + playerName + " / Easy bot karar: " + karar);
+            decision = Random.Range(4, 7);
+            Debug.Log("Player; " + playerName + " / Easy bot karar: " + decision);
 
         }
-        else if (botStraight == 2 || botStraight == 3)
+        else if (botStraight > 3 )
         {
-            karar = Random.Range(6, 9);
-            Debug.Log("Player; " + playerName + " / Easy bot karar: " + karar);
+            decision = Random.Range(7, 12);
+            Debug.Log("Player; " + playerName + " / Easy bot karar: " + decision);
 
         }
-        else if (botStraight > 3)
-        {
-            karar = Random.Range(9, 12);
-            Debug.Log("Player; " + playerName + " / Easy bot karar: " + karar);
-        }
+        
 
     }
     private void MediumBot()
@@ -48,55 +44,47 @@ public class BotPlayer : Player
         botStraight = earlyTourBotHandValue;
         if (botStraight == 0)
         {
-            karar = Random.Range(0, 2);
-            Debug.Log("Player; " + playerName + " / Medium bot kararý: " + karar);
+            decision = Random.Range(0, 3);
+            Debug.Log("Player; " + playerName + " / Medium bot kararý: " + decision);
 
         }
         else if (botStraight == 1)
         {
-            karar = Random.Range(2, 4);
-            Debug.Log("Player; " + playerName + " / Medium bot kararý: " + karar);
+            decision = Random.Range(4, 9);
+            Debug.Log("Player; " + playerName + " / Medium bot kararý: " + decision);
 
         }
         else if (botStraight > 2)
         {
-            karar = Random.Range(4, 9);
-            Debug.Log("Player; " + playerName + " / Medium bot kararý: " + karar);
+            decision = Random.Range(10, 12);
+            Debug.Log("Player; " + playerName + " / Medium bot kararý: " + decision);
 
         }
-        else if (botStraight > 3)
-        {
-            karar = Random.Range(9, 12);
-            Debug.Log("Player; " + playerName + " / Easy bot karar: " + karar);
-        }
+        
     }
     private void HardBot()
-    {//Doðrucu Davut
+    {
 
         botStraight = earlyTourBotHandValue;
         if (botStraight == 0)
         {
 
-            karar = Random.Range(0, 2);
-            Debug.Log("Player; " + playerName + " / Hard bot karar: " + karar);
+            decision = Random.Range(0, 2);
+            Debug.Log("Player; " + playerName + " / Hard bot karar: " + decision);
 
         }
         else if (botStraight == 1)
         {
 
-            karar = Random.Range(2, 4);
-            Debug.Log("Player; " + playerName + " / Hard bot karar: " + karar);
+            decision = Random.Range(5, 8);
+            Debug.Log("Player; " + playerName + " / Hard bot karar: " + decision);
         }
-        else if (botStraight > 2)
+        else if (botStraight >= 2)
         {
-            karar = Random.Range(4, 9);
-            Debug.Log("Player; " + playerName + " / Hard bot karar: " + karar);
+            decision = Random.Range(9, 12);
+            Debug.Log("Player; " + playerName + " / Hard bot karar: " + decision);
         }
-        else if (botStraight > 3)
-        {
-            karar = Random.Range(9, 12);
-            Debug.Log("Player; " + playerName + " / Easy bot karar: " + karar);
-        }
+      
     }
 
     public void MakeDecision(int currentBet = 0, int pot = 0)
@@ -106,7 +94,7 @@ public class BotPlayer : Player
             EasyBot();
             Debug.Log("Easy bot çalýþtý.");
         }
-        else if (botsPower < 7)
+        else if (botsPower > 3 && botStraight < 7)
         {
             MediumBot();
             Debug.Log("Medium bot çalýþtý.");
@@ -118,28 +106,28 @@ public class BotPlayer : Player
 
         }
 
-        State = GameController.instance._gameState;
+        _state = GameController.instance._gameState;
 
         // Karar verin:
-        if (ShouldFold(currentBet, pot, karar))
+        if (ShouldFold(currentBet, pot, decision))
         {
             BotFold();
             UIManager.instance.Fold();
-            Debug.Log(playerName + " / Fold çalýþtý. Karar: " + karar);
+            Debug.Log(playerName + " / Fold çalýþtý. Karar: " + decision);
         }
-        else if (ShouldCall(currentBet, pot, karar))
+        else if (ShouldCall(currentBet, pot, decision))
         {
             BotCall();
-            Debug.Log("Player; " + playerName + " / Call çalýþtý. Karar: " + karar);
+            Debug.Log("Player; " + playerName + " / Call çalýþtý. Karar: " + decision);
 
         }
-        else if (ShouldRaise(currentBet, pot, karar))
+        else if (ShouldRaise(currentBet, pot, decision))
         {
             // Raise
             int raiseAmount = Mathf.Clamp(currentBet + 20, 20, 200);
             betAmount += raiseAmount;
             BotRaise(raiseAmount);
-            Debug.Log("Player; " + playerName + " / Raise çalýþtý. Karar; " + karar);
+            Debug.Log("Player; " + playerName + " / Raise çalýþtý. Karar; " + decision);
 
         }
 
@@ -149,18 +137,20 @@ public class BotPlayer : Player
     {
         // El zayýfsa ve bahis yüksekse fold et
         return currentBet > pot / 4 && karar <= 2;
+
     }
 
     bool ShouldCall(int currentBet, int pot, int karar)
     {
         // El güçlü ise ve bahis makul ise call et
-        return currentBet <= pot && karar <= 9 || karar >= 5;
+        return currentBet <= pot && karar <= 8 && karar >= 3;
     }
 
     bool ShouldRaise(int currentBet, int pot, float karar)
     {
         // El çok güçlüyse ve bahis düþükse raise et
-        return currentBet < pot / 4 && karar <= 12 || karar > 10;
+        return currentBet < pot / 4 && karar <= 12 && karar > 9;
+
     }
 
     public void BotFold()
