@@ -86,6 +86,9 @@ public class EndOfTourPanel : MonoBehaviour
         SceneManager.LoadScene("Scenes/InGame");
 
     }
-
+    public void MainScene()
+    {
+        SceneManager.LoadScene("Scenes/MainMenuScene");
+    }
 
 }

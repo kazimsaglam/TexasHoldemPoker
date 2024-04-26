@@ -77,8 +77,13 @@ namespace UI
     {
       SceneManager.LoadScene("Scenes/InGame");
     }
+        public void Quit()
+        {
+            Application.Quit();
+            Debug.Log("Quit Game");
+        }
 
-    public void OnSignOut()
+        public void OnSignOut()
     {
       FirebaseAuthManager.Instance.OnLogOut();
     }
