@@ -11,3 +11,13 @@ Bu proje, Unity kullanılarak geliştirilmiş, temel Texas Hold'em poker mekani�
 - **Leaderboard (Lider Tablosu)**: Oyuncular arasında rekabeti teşvik etmek için lider tablosu bulunmaktadır. Bu tablo, kullanıcıların puanlarına göre sıralanır ve en yüksek puanı elde eden oyuncuları gösterir.
 
 - **İstatistikler**: Oyun istatistikleri, Firebase kullanılarak toplanır ve kullanıcılara oyun performansları hakkında bilgi verir. Bu istatistikler, kullanıcıların oyun stratejilerini geliştirmelerine yardımcı olabilir.
+
+
+
+#### Screenshots
+![screenshot](https://github.com/kazimsaglam/TexasHoldemPoker/blob/main/Screenshots/ss1.png)
+![screenshot](https://github.com/kazimsaglam/TexasHoldemPoker/blob/main/Screenshots/ss2.png)
+![screenshot](https://github.com/kazimsaglam/TexasHoldemPoker/blob/main/Screenshots/ss3.png)
+![screenshot](https://github.com/kazimsaglam/TexasHoldemPoker/blob/main/Screenshots/ss4.png)
+![screenshot](https://github.com/kazimsaglam/TexasHoldemPoker/blob/main/Screenshots/ss5.png)
+![screenshot](https://github.com/kazimsaglam/TexasHoldemPoker/blob/main/Screenshots/ss6.png)
