@@ -11,39 +11,39 @@ public class SoundManager : MonoBehaviour
     public AudioClip checkSound;
     public AudioClip cardDealSound;
 
-    private AudioSource audioSrc;
+    private AudioSource audioSource;
 
 
     private void Awake()
     {
         instance = this;
 
-        audioSrc = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void PlayCardDealSound()
     {
-        audioSrc.PlayOneShot(cardDealSound);
+        audioSource.PlayOneShot(cardDealSound);
     }
 
     public void PlayDingSound()
     {
-        audioSrc.PlayOneShot(dingSound);
+        audioSource.PlayOneShot(dingSound);
     }
 
     public void PlayFoldSound()
     {
-        audioSrc.PlayOneShot(foldSound);
+        audioSource.PlayOneShot(foldSound);
     }
 
     public void PlayCallAndRaiseSound()
     {
-        audioSrc.PlayOneShot(callAndRaiseSound);
+        audioSource.PlayOneShot(callAndRaiseSound);
     }
 
     public void PlayCheckSound()
     {
-        audioSrc.PlayOneShot(checkSound);
+        audioSource.PlayOneShot(checkSound);
     }
 
 }

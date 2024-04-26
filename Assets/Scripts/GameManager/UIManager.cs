@@ -19,9 +19,9 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI potText;
 
     private Player _mainPlayer;
-    public List<Player> playerlist;
+    public List<Player> playerList;
     private CardDealerAnimation _cardDealerAnim;
-    int numberOfFoldPlayers;
+    int _numberOfFoldPlayers;
 
 
     private void Awake()
@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         _cardDealerAnim = GetComponent<CardDealerAnimation>();
-        playerlist = GameController.instance.playersAndBots;
+        playerList = GameController.instance.playersAndBots;
         _mainPlayer = GameController.instance.playersAndBots[0];
         GameController.instance.EndOfTour += ButtonActiveControl;
         GameController.instance.EndOfTour += PotTransformChange;
@@ -81,32 +81,31 @@ public class UIManager : MonoBehaviour
 
     public void Fold()
     {
-        if (playerlist[GameController.currentPlayerIndex].isFolded && numberOfFoldPlayers < 2)
-
+        if (playerList[GameController.currentPlayerIndex].isFolded && _numberOfFoldPlayers < 2)
         {
-            _cardDealerAnim.AnimateFoldCardDeal(playerlist[GameController.currentPlayerIndex].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+            _cardDealerAnim.AnimateFoldCardDeal(playerList[GameController.currentPlayerIndex].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+            Player.instance.ShowPlayerAction("Fold");
+            playerList[GameController.currentPlayerIndex].ClearBets();
 
-            playerlist[GameController.currentPlayerIndex].ClearBets();
-
-            numberOfFoldPlayers += 1;
-
-            Debug.Log("Number of fold players: " + numberOfFoldPlayers);
+            _numberOfFoldPlayers += 1;
+            
+            Debug.Log("Number of fold players: " + _numberOfFoldPlayers);
             IsBettingButtonActive();
         }
-        else if (numberOfFoldPlayers == 2)
+        else if (_numberOfFoldPlayers == 2)
         {// Oyunda iki kiþinin kalmasý için
-            playerlist[GameController.currentPlayerIndex].isFolded = false;
+            playerList[GameController.currentPlayerIndex].isFolded = false;
             Call();
             Debug.Log("Fold çalýþmalý...Call çalýþtý");
         }
     }
     public void PlayerFoldButton()
     {
-        numberOfFoldPlayers += 1;
+        _numberOfFoldPlayers += 1;
 
-        playerlist[0].isFolded = true;
-        _cardDealerAnim.AnimateFoldCardDeal(playerlist[0].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
-        playerlist[0].ClearBets();
+        playerList[0].isFolded = true;
+        _cardDealerAnim.AnimateFoldCardDeal(playerList[0].gameObject, GameObject.Find("PlaceholdersContainer").gameObject.transform.position);
+        playerList[0].ClearBets();
 
         _mainPlayer.ShowPlayerAction("Fold");
         SoundManager.instance.PlayFoldSound();
@@ -115,9 +114,9 @@ public class UIManager : MonoBehaviour
     }
     public void IsFoldedControl()
     {
-        for (int i = 0; i< playerlist.Count; i++)
+        for (int i = 0; i< playerList.Count; i++)
         {
-            if (playerlist[i].isFolded)
+            if (playerList[i].isFolded)
             {
                EndOfTourPanel.instance.cardPosition[i].transform.GetChild(0).gameObject.SetActive(true);
             }
@@ -129,15 +128,15 @@ public class UIManager : MonoBehaviour
         // Current bet control
         int currentBet = GameController.instance.currentBet;
 
-        if (playerlist[GameController.currentPlayerIndex].money <= currentBet)
+        if (playerList[GameController.currentPlayerIndex].money <= currentBet)
         {
             AllIn();
             return;
         }
 
         // Accept the bet and decrease the player's money.
-        playerlist[GameController.currentPlayerIndex].betAmount += currentBet;
-        playerlist[GameController.currentPlayerIndex].money -= currentBet;
+        playerList[GameController.currentPlayerIndex].betAmount += currentBet;
+        playerList[GameController.currentPlayerIndex].money -= currentBet;
 
         PlayerManager.Instance.playerMoney -= currentBet;
         FirebaseAuthManager.Instance.UpdateMoney(PlayerManager.Instance.playerMoney);
@@ -145,9 +144,12 @@ public class UIManager : MonoBehaviour
         GameController.instance.AddToCurrentBet(currentBet);
 
         UpdatePot(currentBet);
-        UpdatePlayerUI(playerlist[GameController.currentPlayerIndex]);
+        UpdatePlayerUI(playerList[GameController.currentPlayerIndex]);
+        if(playerList[GameController.currentPlayerIndex].isFolded != true)
+        {
 
-        playerlist[GameController.currentPlayerIndex].ShowPlayerAction("Call");
+        }
+        playerList[GameController.currentPlayerIndex].ShowPlayerAction("Call");
         SoundManager.instance.PlayCallAndRaiseSound();
 
         HideBettingButtons();

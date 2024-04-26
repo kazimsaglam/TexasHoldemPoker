@@ -13,7 +13,7 @@ public enum PlayerType
 
 public class Player : MonoBehaviour
 {
-    
+    public static Player instance;
     public string playerName;
     public int money;
     public static int botsPower;
@@ -33,9 +33,12 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI betText;
     public GameObject playerActionTextPrefab;
     public Transform playerActionTextContainer;
-    GameState gameState;
+    GameState _gameState;
 
-   
+    private void Awake()
+    {
+        instance = this;
+    }
     public void SetPlayer(string fullName, int startingMoney, PlayerType player, int botPower)
     {
         gameObject.name = fullName;
@@ -108,10 +111,10 @@ public class Player : MonoBehaviour
         PokerHand pk = new PokerHand();
 
         //compare them out
-        pk.setPokerHand(handToCompare.ToArray());
+        pk.SetPokerHand(handToCompare.ToArray());
 
         handValue = pk.strength;
-        handValueString = pk.printResult();
+        handValueString = pk.PrintResult();
     }
 
     public int CompareHighestCard(Player otherPlayer)
@@ -138,11 +141,11 @@ public class Player : MonoBehaviour
 
     public void BotHandControl(List<Card> boardCards, Player player)
     {
-        gameState = GameController.instance._gameState;
+        _gameState = GameController.instance.gameState;
 
         List<Card> botHandList = new List<Card>();
 
-        if (player.hand != null && gameState == GameState.PreFlop && player.isFolded == false)
+        if (player.hand != null && _gameState == GameState.PreFlop && player.isFolded == false)
         {
             for (int i = 0; i < hand.Count; i++)
             {
@@ -157,7 +160,7 @@ public class Player : MonoBehaviour
             //botHandList.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
             //Debug.Log("Bot hand list: " + string.Join(", ", botHandList.Select(card => card.cardValue.ToString())));
         }
-        else if (gameState != GameState.PreFlop && player.isFolded == false)
+        else if (_gameState != GameState.PreFlop && player.isFolded == false)
         {
             for (int i = 0; i < hand.Count; i++)
             {
@@ -169,7 +172,7 @@ public class Player : MonoBehaviour
                 botHandList.Add(boardCards[i]);
             }
 
-            Debug.Log(gameState + " turunda kart kontrolü yapıldı. " + "Player; " + player.name + " / Hand.Count; " + botHandList.Count);
+            Debug.Log(_gameState + " turunda kart kontrolü yapıldı. " + "Player; " + player.name + " / Hand.Count; " + botHandList.Count);
             PokerHand ptk = new PokerHand();
 
             ptk.BotAISetPokerHand(botHandList.ToArray());

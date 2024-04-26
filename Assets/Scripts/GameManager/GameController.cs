@@ -44,7 +44,7 @@ public class GameController : MonoBehaviour
     private int _smallBlind;
     private int _bigBlind;
 
-    public GameState _gameState;
+    public GameState gameState;
     private DeckManager _deckManager;
 
     public List<Player> winners;
@@ -120,13 +120,13 @@ public class GameController : MonoBehaviour
             UIManager.instance.UpdatePlayerUI(player);
         }
 
-        _gameState = GameState.PreFlop;
+        gameState = GameState.PreFlop;
         UpdateGameState();
     }
 
     public void UpdateGameState()
     {
-        switch (_gameState)
+        switch (gameState)
         {
             case GameState.PreFlop:
                
@@ -204,7 +204,7 @@ public class GameController : MonoBehaviour
             NextPlayer();
         } while (playersAndBots[currentPlayerIndex].betRoundIndex < 1);
 
-        _gameState++;
+        gameState++;
         UpdateGameState();
     }
 
@@ -307,7 +307,7 @@ public class GameController : MonoBehaviour
 
         foreach (Player player in playersAndBots)
         {
-            if (_gameState == GameState.PreFlop)
+            if (gameState == GameState.PreFlop)
             {
                 player.BotHandControl(player.hand, player);
             }

@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class PokerHand
 {
-    public bool RYL_FLUSH;
-    public bool STRAIGHT_FLUSH;
-    public bool FOUR_A_KIND;
-    public bool FULL_HOUSE;
-    public bool FLUSH;
-    public bool STRAIGHT;
-    public bool THREE_A_KIND;
-    public bool TWO_PAIR;
-    public bool PAIR;
-    public bool HIGH_CARD;
+    public bool royalFlush;
+    public bool straightFlush;
+    public bool fourAKing;
+    public bool fullHouse;
+    public bool flush;
+    public bool straight;
+    public bool threeAKind;
+    public bool twoPair;
+    public bool pair;
+    public bool highCards;
     public List<Card> highCard;
     public int strength;
     public int earlyStrenght;
@@ -22,23 +22,23 @@ public class PokerHand
 
     public PokerHand()
     {
-        this.RYL_FLUSH = false;
-        this.STRAIGHT_FLUSH = false;
-        this.FOUR_A_KIND = false;
-        this.FULL_HOUSE = false;
-        this.FLUSH = false;
-        this.STRAIGHT = false;
-        this.THREE_A_KIND = false;
-        this.TWO_PAIR = false;
-        this.PAIR = false;
-        this.HIGH_CARD = false;
-        this.highCard = new List<Card>();
-        this.strength = 0;
-        this.earlyStrenght = 0;
+        royalFlush = false;
+        straightFlush = false;
+        fourAKing = false;
+        fullHouse = false;
+        flush = false;
+        straight = false;
+        threeAKind = false;
+        twoPair = false;
+        pair = false;
+        highCards = false;
+        highCard = new List<Card>();
+        strength = 0;
+        earlyStrenght = 0;
 
     }
 
-    public void setPokerHand(Card[] cardArray)
+    public void SetPokerHand(Card[] cardArray)
     {
         List<Card> cards = new List<Card>();
         foreach (Card c in cardArray)
@@ -47,15 +47,15 @@ public class PokerHand
         }
 
         //if (isRoyal(cards)) return;
-        if (isStraightFlush(cards)) return;
-        if (isFourAKind(cards)) return;
-        if (isFullHouse(cards)) return;
-        if (isFlush(cards)) return;
-        if (isStraight(cards)) return;
-        if (isThreeAKind(cards)) return;
-        if (isTwoPair(cards)) return;
-        if (isPair(cards)) return;
-        isHigh(cards);
+        if (IsStraightFlush(cards)) return;
+        if (IsFourAKind(cards)) return;
+        if (IsFullHouse(cards)) return;
+        if (IsFlush(cards)) return;
+        if (IsStraight(cards)) return;
+        if (IsThreeAKind(cards)) return;
+        if (IsTwoPair(cards)) return;
+        if (IsPair(cards)) return;
+        IsHigh(cards);
     }
     public void BotAISetPokerHand(Card[] cardArray)
     {
@@ -65,54 +65,54 @@ public class PokerHand
             cards.Add(c);
         }
 
-        if (/*isRoyal(cards) ||*/ isStraightFlush(cards) || isFourAKind(cards) || isFullHouse(cards) ||
-            isFlush(cards) || isStraight(cards) || isThreeAKind(cards) || isTwoPair(cards) || isPair(cards))
+        if (IsRoyal(cards) || IsStraightFlush(cards) || IsFourAKind(cards) || IsFullHouse(cards) ||
+            IsFlush(cards) || IsStraight(cards) || IsThreeAKind(cards) || IsTwoPair(cards) || IsPair(cards))
         {
             return;
         }
 
-        isHigh(cards);
+        IsHigh(cards);
     }
 
-    public String printResult()
+    public String PrintResult()
     {
-        if (this.RYL_FLUSH)
+        if (this.royalFlush)
         {
             return "Royal Flush" + "- Strength:" + this.strength;
         }
-        else if (this.STRAIGHT_FLUSH)
+        else if (this.straightFlush)
         {
             return "Straight Flush" + "- Strength:" + this.strength;
         }
-        else if (this.FOUR_A_KIND)
+        else if (this.fourAKing)
         {
             return "Four of a kind" + "- Strength:" + this.strength;
         }
-        else if (this.FULL_HOUSE)
+        else if (this.fullHouse)
         {
             return "Full house" + "- Strength:" + this.strength;
         }
-        else if (this.FLUSH)
+        else if (this.flush)
         {
             return "Flush" + "- Strength:" + this.strength;
         }
-        else if (this.STRAIGHT)
+        else if (this.straight)
         {
             return "Straight" + "- Strength:" + this.strength;
         }
-        else if (this.THREE_A_KIND)
+        else if (this.threeAKind)
         {
             return "Three of a kind" + "- Strength:" + this.strength;
         }
-        else if (this.TWO_PAIR)
+        else if (this.twoPair)
         {
             return "Two Pair" + "- Strength:" + this.strength;
         }
-        else if (this.PAIR)
+        else if (this.pair)
         {
             return "Pair" + "- Strength:" + this.strength;
         }
-        else if (this.HIGH_CARD)
+        else if (this.highCards)
         {
             return "High card" + "- Strength:" + this.strength;
         }
@@ -122,43 +122,43 @@ public class PokerHand
     public String BotAIprintResult()
     {
 
-        if (this.PAIR)
+        if (this.pair)
         {
             return "Pair" + "- Strength:" + this.strength;
         }
-        else if (this.TWO_PAIR)
+        else if (this.twoPair)
         {
             return "Two Pair" + "- Strength:" + this.strength;
         }
-        else if (this.THREE_A_KIND)
+        else if (this.threeAKind)
         {
             return "Three of a kind" + "- Strength:" + this.strength;
         }
-        else if (this.STRAIGHT)
+        else if (this.straight)
         {
             return "Straight" + "- Strength:" + this.strength;
         }
-        else if (this.FLUSH)
+        else if (this.flush)
         {
             return "Flush" + "- Strength:" + this.strength;
         }
-        else if (this.FULL_HOUSE)
+        else if (this.fullHouse)
         {
             return "Full house" + "- Strength:" + this.strength;
         }
-        else if (this.FOUR_A_KIND)
+        else if (this.fourAKing)
         {
             return "Four of a kind" + "- Strength:" + this.strength;
         }
-        else if (this.STRAIGHT_FLUSH)
+        else if (this.straightFlush)
         {
             return "Straight Flush" + "- Strength:" + this.strength;
         }
-        else if (this.RYL_FLUSH)
+        else if (this.royalFlush)
         {
             return "Royal Flush" + "- Strength:" + this.strength;
         }
-        else if (this.HIGH_CARD)
+        else if (this.highCards)
         {
             return "High card" + "- Strength:" + this.strength;
         }
@@ -166,29 +166,29 @@ public class PokerHand
             return "error setting hand.";
     }
 
-    private bool isRoyal(List<Card> cards)
+    private bool IsRoyal(List<Card> cards)
     {
         this.highCard = new List<Card>();
         this.highCard.Add(cards.ElementAt(4));
 
-        if (isFlush(cards) && isStraight(cards) && this.highCard.ElementAt(0).cardValue == CardValue.Ace)
+        if (IsFlush(cards) && IsStraight(cards) && this.highCard.ElementAt(0).cardValue == CardValue.Ace)
         {
-            this.RYL_FLUSH = true;
+            this.royalFlush = true;
             this.strength = 9;
             this.earlyStrenght = 9;
 
         }
 
-        return this.RYL_FLUSH;
+        return this.royalFlush;
     }
 
-    private bool isStraightFlush(List<Card> cards)
+    private bool IsStraightFlush(List<Card> cards)
     {
         this.highCard = new List<Card>();
         this.highCard.Add(cards.ElementAt(4));
-        if (isFlush(cards) && isStraight(cards))
+        if (IsFlush(cards) && IsStraight(cards))
         {
-            this.STRAIGHT_FLUSH = true;
+            this.straightFlush = true;
             this.strength = 8;
             this.earlyStrenght = 8;
 
@@ -198,7 +198,7 @@ public class PokerHand
         return false;
     }
 
-    private bool isFourAKind(List<Card> cards)
+    private bool IsFourAKind(List<Card> cards)
     {
         this.highCard = new List<Card>();
         int count;
@@ -206,15 +206,15 @@ public class PokerHand
         for (int i = 0; i < 5; i++)
         {
             count = 0;
-            Card curentCard = cards.ElementAt(i);
+            Card _curentCard = cards.ElementAt(i);
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue == card.cardValue)
+                if (_curentCard.cardValue == card.cardValue)
                     count++;
 
                 if (count == 4)
                 {
-                    this.FOUR_A_KIND = true;
+                    this.fourAKing = true;
                     this.highCard.Add(card);
                     this.strength = 7;
                     this.earlyStrenght = 7;
@@ -234,7 +234,7 @@ public class PokerHand
         return false;
     }
 
-    private bool isFullHouse(List<Card> cards)
+    private bool IsFullHouse(List<Card> cards)
     {
         this.highCard = new List<Card>();
         int count;
@@ -244,10 +244,10 @@ public class PokerHand
         for (int i = 0; i < 5; i++)
         {
             count = 0;
-            Card curentCard = cards.ElementAt(i);
+            Card _curentCard = cards.ElementAt(i);
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue == card.cardValue)
+                if (_curentCard.cardValue == card.cardValue)
                     count++;
 
                 // found three of a kind
@@ -276,7 +276,7 @@ public class PokerHand
                                 {
                                     this.highCard.Add(match1);
                                     this.highCard.Add(match2);
-                                    this.FULL_HOUSE = true;
+                                    this.fullHouse = true;
                                     this.strength = 6;
                                     this.earlyStrenght = 6;
 
@@ -292,7 +292,7 @@ public class PokerHand
         return false;
     }
 
-    private bool isFlush(List<Card> cards)
+    private bool IsFlush(List<Card> cards)
     {
         // check to see what suite the playersAndBots card is and see if all cards
         // share that suite.
@@ -312,14 +312,14 @@ public class PokerHand
             this.highCard.Add(cards.ElementAt(i));
         }
 
-        this.FLUSH = true;
+        this.flush = true;
         this.strength = 5;
         this.earlyStrenght = 5;
 
         return true;
     }
 
-    private bool isStraight(List<Card> cards)
+    private bool IsStraight(List<Card> cards)
     {
         this.highCard = new List<Card>();
         Card card1 = cards.ElementAt(0);
@@ -333,7 +333,7 @@ public class PokerHand
         {
             if ((card4.cardValue - card5.cardValue == -1))
             {
-                this.STRAIGHT = true;
+                this.straight = true;
                 this.strength = 4;
 
                 for (int i = 4; i >= 0; i--)
@@ -344,7 +344,7 @@ public class PokerHand
 
             else if ((int)card1.cardValue == 2 && (int)card5.cardValue == 14 /* ACE */)
             {
-                this.STRAIGHT = true;
+                this.straight = true;
                 this.strength = 4;
                 this.earlyStrenght = 4;
 
@@ -354,13 +354,13 @@ public class PokerHand
                 }
             }
             else
-                return this.STRAIGHT;
+                return this.straight;
         }
 
-        return this.STRAIGHT;
+        return this.straight;
     }
 
-    private bool isThreeAKind(List<Card> cards)
+    private bool IsThreeAKind(List<Card> cards)
     {
         this.highCard = new List<Card>();
         int count;
@@ -368,16 +368,16 @@ public class PokerHand
         for (int i = 0; i < 5; i++)
         {
             count = 0;
-            Card curentCard = cards.ElementAt(i);
+            Card _curentCard = cards.ElementAt(i);
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue == card.cardValue)
+                if (_curentCard.cardValue == card.cardValue)
                     count++;
 
                 if (count == 3)
                 {
                     this.highCard.Add(card);
-                    this.THREE_A_KIND = true;
+                    this.threeAKind = true;
                     this.strength = 3;
                     this.earlyStrenght = 3;
 
@@ -391,10 +391,10 @@ public class PokerHand
             }
         }
 
-        return this.THREE_A_KIND;
+        return this.threeAKind;
     }
 
-    private bool isTwoPair(List<Card> cards)
+    private bool IsTwoPair(List<Card> cards)
     {
         this.highCard = new List<Card>();
         int count;
@@ -403,11 +403,11 @@ public class PokerHand
         for (int i = 0; i < 5; i++)
         {
             count = 0;
-            Card curentCard = cards.ElementAt(i);
+            Card _curentCard = cards.ElementAt(i);
 
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue == card.cardValue)
+                if (_curentCard.cardValue == card.cardValue)
                     count++;
 
                 // found a pair
@@ -427,13 +427,13 @@ public class PokerHand
             for (int i = 0; i < 5; i++)
             {
                 count = 0;
-                Card curentCard = cards.ElementAt(i);
+                Card _curentCard = cards.ElementAt(i);
 
-                if (curentCard.cardValue != match1.cardValue)
+                if (_curentCard.cardValue != match1.cardValue)
                 {
                     foreach (Card card in cards)
                     {
-                        if (curentCard.cardValue == card.cardValue)
+                        if (_curentCard.cardValue == card.cardValue)
                             count++;
 
                         // found second pair
@@ -441,7 +441,7 @@ public class PokerHand
                         {
                             this.highCard.Add(card);
                             this.highCard.Add(match1);
-                            this.TWO_PAIR = true;
+                            this.twoPair = true;
                             this.strength = 2;
                             this.earlyStrenght = 2;
 
@@ -458,10 +458,10 @@ public class PokerHand
             }
         }
 
-        return this.TWO_PAIR;
+        return this.twoPair;
     }
 
-    private bool isPair(List<Card> cards)
+    private bool IsPair(List<Card> cards)
     {
         this.highCard = new List<Card>();
         int count;
@@ -469,15 +469,15 @@ public class PokerHand
         for (int i = 0; i < 5; i++)
         {
             count = 0;
-            Card curentCard = cards.ElementAt(i);
+            Card _curentCard = cards.ElementAt(i);
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue == card.cardValue)
+                if (_curentCard.cardValue == card.cardValue)
                     count++;
 
                 if (count == 2)
                 {
-                    this.PAIR = true;
+                    this.pair = true;
                     this.highCard.Add(card);
                     this.strength = 1;
                     this.earlyStrenght = 1;
@@ -491,10 +491,10 @@ public class PokerHand
             }
         }
 
-        return this.PAIR;
+        return this.pair;
     }
 
-    private void isHigh(List<Card> cards)
+    private void IsHigh(List<Card> cards)
     {
         this.highCard = new List<Card>();
         for (int j = 4; j >= 0; j--)
@@ -502,7 +502,7 @@ public class PokerHand
             this.highCard.Add(cards.ElementAt(j));
         }
 
-        this.HIGH_CARD = true;
+        this.highCards = true;
     }
 
     public void EarlyTourBotHandControl(List<Card> cards, Player player)
@@ -513,11 +513,11 @@ public class PokerHand
         for (int i = 0; i < player.hand.Count; i++)
         {
             count = 0;
-            Card curentCard = cards.ElementAt(i);
+            Card _curentCard = cards.ElementAt(i);
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue == CardValue.King || curentCard.cardValue == CardValue.Queen ||
-                    curentCard.cardValue == CardValue.Jack || curentCard.cardValue == CardValue.Ace)
+                if (_curentCard.cardValue == CardValue.King || _curentCard.cardValue == CardValue.Queen ||
+                    _curentCard.cardValue == CardValue.Jack || _curentCard.cardValue == CardValue.Ace)
                     count++;
 
                 if (count == 2)
@@ -530,7 +530,7 @@ public class PokerHand
             count = 0;
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue == card.cardValue)
+                if (_curentCard.cardValue == card.cardValue)
                     count++;
 
                 if (count == 2)
@@ -544,7 +544,7 @@ public class PokerHand
             count = 0;
             foreach (Card card in cards)
             {
-                if (curentCard.cardValue - card.cardValue == 1)
+                if (_curentCard.cardValue - card.cardValue == 1)
                     count++;
 
                 if (count == 2)

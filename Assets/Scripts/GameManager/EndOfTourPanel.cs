@@ -22,7 +22,7 @@ public class EndOfTourPanel : MonoBehaviour
     public List<GameObject> cardPosition;
     public GameObject placeholderBoard;
     public TextMeshProUGUI potText;
-    private int betTextCount = 4;
+    private int _betTextCount = 4;
 
 
 
@@ -53,7 +53,7 @@ public class EndOfTourPanel : MonoBehaviour
             playerObjects[i].transform.position = cardPosition[i].transform.position;
             playerObjects[i].SetActive(true);
             playerObjects[i].transform.GetChild(0).position = textPosition[i].transform.position;
-            playerObjects[i].transform.GetChild(1).position = textPosition[i + betTextCount].transform.position;
+            playerObjects[i].transform.GetChild(1).position = textPosition[i + _betTextCount].transform.position;
             
                 
         

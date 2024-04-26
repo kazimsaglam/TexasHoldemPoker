@@ -106,7 +106,7 @@ public class BotPlayer : Player
 
         }
 
-        _state = GameController.instance._gameState;
+        _state = GameController.instance.gameState;
 
         // Karar verin:
         if (ShouldFold(currentBet, pot, decision))
@@ -156,8 +156,7 @@ public class BotPlayer : Player
     public void BotFold()
     {
         isFolded = true;
-
-        ShowPlayerAction("Fold");
+      
         SoundManager.instance.PlayFoldSound();
     }
 
