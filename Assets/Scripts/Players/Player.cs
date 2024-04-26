@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     public int earlyTourBotHandValue;
     public string earlyTourBotHandValueString;
     public bool isFolded = false;
+
     public int betAmount;
     public int betRoundIndex;
     public PlayerType playerType;
@@ -32,7 +33,6 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI betText;
     public GameObject playerActionTextPrefab;
     public Transform playerActionTextContainer;
-    public List<Card> handToCompare;
     GameState gameState;
 
    

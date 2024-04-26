@@ -129,8 +129,8 @@ public class GameController : MonoBehaviour
         switch (_gameState)
         {
             case GameState.PreFlop:
-                _deckManager.DealPlayerHands();
-                StartCoroutine(BotHand());
+               
+               
                 StartCoroutine(StartBettingRound());
                 break;
 
@@ -164,7 +164,12 @@ public class GameController : MonoBehaviour
 
     public IEnumerator StartBettingRound()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
+
+        _deckManager.DealPlayerHands();
+        StartCoroutine(BotHand());
+
+        yield return new WaitForSeconds(1f);
 
         // Start with small and big blinds
         MakeBlindBets();
@@ -223,7 +228,7 @@ public class GameController : MonoBehaviour
         else if (currentPlayer is BotPlayer botPlayer)
         {
             // Simulate bot thinking time
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(7f);
 
             // Implement bot strategy based on hand strength, pot size, etc.
             botPlayer.MakeDecision(currentBet, pot);
@@ -298,7 +303,7 @@ public class GameController : MonoBehaviour
 
     public IEnumerator BotHand()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(1f);
 
         foreach (Player player in playersAndBots)
         {

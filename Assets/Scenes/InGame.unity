@@ -2410,11 +2410,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2033380793}
+  m_Father: {fileID: 6370618421102861344}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.9014, y: -0.68356323}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 177.20328, y: 176.00005}
   m_SizeDelta: {x: 252.8631, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1145589859
@@ -3054,8 +3054,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2033380793}
+  m_Children: []
   m_Father: {fileID: 6370618421102861344}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3399,17 +3398,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2033380792}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1145589858}
-  m_Father: {fileID: 1596800076}
+  m_Children: []
+  m_Father: {fileID: 6370618421102861344}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.0685997, y: 176.6836}
+  m_AnchoredPosition: {x: -185.93153, y: 176.6836}
   m_SizeDelta: {x: 302.5331, y: 91.3672}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2033380794
@@ -3764,6 +3762,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7024516915771828910, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8030203381143135348, guid: d807acfd752323b408a6a476d3f4529b, type: 3}
       propertyPath: placeholderBoard
       value: 
@@ -3850,7 +3852,7 @@ GameObject:
   m_Component:
   - component: {fileID: 360557588100838625}
   m_Layer: 5
-  m_Name: MoneyText (1)
+  m_Name: Bot1MoneyText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -3896,7 +3898,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8870011229335934972}
   m_Layer: 5
-  m_Name: MoneyText
+  m_Name: PlayerMoneyText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4014,7 +4016,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1811387481946034929}
   m_Layer: 5
-  m_Name: BetText (2)
+  m_Name: Bot3BetText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4068,7 +4070,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6047787153423618748}
   m_Layer: 5
-  m_Name: BetText (1)
+  m_Name: WinnerBetText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4251,7 +4253,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4513806879240152864}
   m_Layer: 5
-  m_Name: BetText (2)
+  m_Name: 'Bot2BetText '
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4267,7 +4269,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6993627206794896759}
   m_Layer: 5
-  m_Name: BetText (1)
+  m_Name: PlayerBetText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4393,7 +4395,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7479574974742466327}
   m_Layer: 5
-  m_Name: BetText (2)
+  m_Name: Bot1BetText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4569,6 +4571,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1596800076}
+  - {fileID: 2033380793}
+  - {fileID: 1145589858}
   m_Father: {fileID: 1357963449721554977}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
@@ -4647,7 +4651,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5949846550104952961}
   m_Layer: 5
-  m_Name: MoneyText (1)
+  m_Name: Bot3MoneyText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4719,7 +4723,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9106937249056908500}
   m_Layer: 5
-  m_Name: MoneyText
+  m_Name: WinnerMoneyText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4743,7 +4747,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4506794667999397236}
   m_Layer: 5
-  m_Name: MoneyText (1)
+  m_Name: Bot2MoneyText
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

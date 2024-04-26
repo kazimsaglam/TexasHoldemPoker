@@ -2,7 +2,6 @@ using Database;
 using Game;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,7 +36,7 @@ public class UIManager : MonoBehaviour
         _mainPlayer = GameController.instance.playersAndBots[0];
         GameController.instance.EndOfTour += ButtonActiveControl;
         GameController.instance.EndOfTour += PotTransformChange;
-        GameController.instance.EndOfTour += IsFoldedControl ;
+        GameController.instance.EndOfTour += IsFoldedControl;
 
 
         HideBettingButtons();
