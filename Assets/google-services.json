@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "604749798562",
+    "firebase_url": "https://holdempoker-beef5-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "holdempoker-beef5",
+    "storage_bucket": "holdempoker-beef5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604749798562:android:e74ebe82004f8d4bc08bfb",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.HoldemPoker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6jSgce5qq7KhlqmTvMI9SXTGf18pd3Rc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

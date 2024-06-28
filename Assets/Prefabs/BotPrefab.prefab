@@ -324,9 +324,12 @@ MonoBehaviour:
   hand: []
   handValue: 0
   handValueString: 
+  earlyTourBotHandValue: 0
+  earlyTourBotHandValueString: 
   isFolded: 0
   betAmount: 0
   betRoundIndex: 0
+  playerType: 0
   moneyText: {fileID: 4813516305584773292}
   betText: {fileID: 8175698201381728829}
   playerActionTextPrefab: {fileID: 1268028460735237355, guid: afa699f7fe309ec4081b434fb7a5bf61, type: 3}

@@ -16,7 +16,6 @@ public class Player : MonoBehaviour
     public static Player instance;
     public string playerName;
     public int money;
-    public static int botsPower;
 
 
     public List<Card> hand;
@@ -35,22 +34,23 @@ public class Player : MonoBehaviour
     public Transform playerActionTextContainer;
     GameState _gameState;
 
+
+
     private void Awake()
     {
         instance = this;
+
     }
     public void SetPlayer(string fullName, int startingMoney, PlayerType player, int botPower)
     {
         gameObject.name = fullName;
         playerName = fullName;
         playerType = player;
-        botsPower = botPower;
         money = startingMoney;
         hand = new List<Card>();
         betAmount = 0;
         isFolded = false;
     }
-
 
     public void MakeBet(int amount)
     {
@@ -74,7 +74,6 @@ public class Player : MonoBehaviour
     {
         betAmount = 0;
     }
-
     public void ClearHand()
     {
         hand.Clear();
@@ -117,26 +116,143 @@ public class Player : MonoBehaviour
         handValueString = pk.PrintResult();
     }
 
-    public int CompareHighestCard(Player otherPlayer)
+    public int ComparePairCard(Player otherPlayer, List<Card> boardCards)
     {
-        //Sorts the cards in players' hands according to their value
-        hand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
-        otherPlayer.hand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
 
-        for (int i = 0; i < hand.Count; i++)
+        List<Card> combinedHand = GameController.instance.tiedPlayers[0].hand;
+        combinedHand.AddRange(boardCards);
+        combinedHand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+
+        List<Card> otherCombinedHand = GameController.instance.tiedPlayers[1].hand;
+        otherCombinedHand.AddRange(boardCards);
+        otherCombinedHand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+
+        // Pair kartlarını bul
+        Card thisPairCard = GetPairCard(combinedHand);
+        Card otherPairCard = GetPairCard(otherCombinedHand);
+
+        if (thisPairCard == null || otherPairCard == null)
         {
-            if (hand[i].cardValue > otherPlayer.hand[i].cardValue)
-            {
-                return 1; // This player's card is stronger
-            }
+            return 0;
+        }
 
-            if (hand[i].cardValue < otherPlayer.hand[i].cardValue)
+        if (thisPairCard.cardValue > otherPairCard.cardValue)
+        {
+            return 1;
+        }
+        else if (thisPairCard.cardValue < otherPairCard.cardValue)
+        {
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+
+    }
+    public int CompareTwoPairCard(Player otherPlayer, List<Card> boardCards)
+    {
+        List<Card> combinedTwoPairHand = GameController.instance.tiedPlayers[0].hand;
+        combinedTwoPairHand.AddRange(boardCards);
+        combinedTwoPairHand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+
+        List<Card> otherCombinedTwoPairHand = GameController.instance.tiedPlayers[1].hand;
+        otherCombinedTwoPairHand.AddRange(boardCards);
+        otherCombinedTwoPairHand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+
+
+        GetTwoPairCard(combinedTwoPairHand);
+        List<Card> thisTwoPairCard = pairCards;
+        thisTwoPairCard[0] = pairCards[0];
+        thisTwoPairCard[1] = pairCards[1];
+
+        GetTwoPairCard(otherCombinedTwoPairHand);
+        List<Card> otherTwoPairCard = pairCards;
+        otherTwoPairCard[0] = pairCards[2];
+        otherTwoPairCard[1] = pairCards[3];
+
+        if (thisTwoPairCard == null || otherTwoPairCard == null)
+        {
+            return 0;
+
+        }
+        if (thisTwoPairCard[0].cardValue > otherTwoPairCard[0].cardValue || thisTwoPairCard[1].cardValue > otherTwoPairCard[1].cardValue)
+        {
+            return 1;
+        }
+        else if (thisTwoPairCard[0].cardValue < otherTwoPairCard[0].cardValue || thisTwoPairCard[1].cardValue < otherTwoPairCard[1].cardValue)
+        {
+
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    public int CompareHighestCard(Player otherPlayer, List<Card> boardCards)
+    {
+        List<Card> combinedHighestHand = GameController.instance.tiedPlayers[0].hand;
+        if (GameController.instance.tiedPlayers[0].hand.Count < 7)
+        {
+            combinedHighestHand.AddRange(boardCards);
+            combinedHighestHand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+        }
+
+        List<Card> otherCombinedHighestHand = GameController.instance.tiedPlayers[1].hand;
+        if (GameController.instance.tiedPlayers[0].hand.Count < 7)
+        {
+            otherCombinedHighestHand.AddRange(boardCards);
+            otherCombinedHighestHand.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
+        }
+
+        for (int i = 0; i < combinedHighestHand.Count; i++)
+        {
+            if (combinedHighestHand[i].cardValue > otherCombinedHighestHand[i].cardValue)
             {
-                return -1; // Other player's card is stronger
+                return 1;
+            }
+            else if (combinedHighestHand[i].cardValue < otherCombinedHighestHand[i].cardValue)
+            {
+                return -1;
             }
         }
 
-        return 0; // equal card strength
+        return 0;
+
+    }
+
+    private Card GetPairCard(List<Card> hand)
+    {
+
+        for (int i = 0; i < hand.Count - 1; i++)
+        {
+            if (hand[i].cardValue == hand[i + 1].cardValue)
+            {
+                return hand[i];
+            }
+        }
+        return null;
+    }
+    List<Card> pairCards = new List<Card>();
+    private Card GetTwoPairCard(List<Card> hand)
+    {
+        for (int i = 0; i < hand.Count - 1; i++)
+        {
+            if (hand[i].cardValue == hand[i + 1].cardValue)
+            {
+                pairCards.Add(hand[i]);
+                i++;
+            }
+
+            if (pairCards.Count == 2)
+            {
+
+                return pairCards[i];
+
+            }
+        }
+        return null;
     }
 
     public void BotHandControl(List<Card> boardCards, Player player)
@@ -145,7 +261,7 @@ public class Player : MonoBehaviour
 
         List<Card> botHandList = new List<Card>();
 
-        if (player.hand != null && _gameState == GameState.PreFlop && player.isFolded == false)
+        if (player.hand.Count > 1 && _gameState == GameState.PreFlop && player.isFolded == false)
         {
             for (int i = 0; i < hand.Count; i++)
             {
@@ -157,10 +273,9 @@ public class Player : MonoBehaviour
             earlyTourBotHandValue = ptk.earlyStrenght;
 
             Debug.Log("İlk tur kart kontrolü yapıldı. " + "Player; " + player.name + " , El gücü " + earlyTourBotHandValue);
-            //botHandList.Sort((x, y) => y.cardValue.CompareTo(x.cardValue));
-            //Debug.Log("Bot hand list: " + string.Join(", ", botHandList.Select(card => card.cardValue.ToString())));
+
         }
-        else if (_gameState != GameState.PreFlop && player.isFolded == false)
+        else if (_gameState != GameState.PreFlop && _gameState != GameState.Showdown && player.isFolded == false)
         {
             for (int i = 0; i < hand.Count; i++)
             {
@@ -172,13 +287,16 @@ public class Player : MonoBehaviour
                 botHandList.Add(boardCards[i]);
             }
 
-            Debug.Log(_gameState + " turunda kart kontrolü yapıldı. " + "Player; " + player.name + " / Hand.Count; " + botHandList.Count);
             PokerHand ptk = new PokerHand();
 
             ptk.BotAISetPokerHand(botHandList.ToArray());
             earlyTourBotHandValue = ptk.earlyStrenght;
             earlyTourBotHandValueString = ptk.BotAIprintResult();
+
+            Debug.Log(_gameState + " turunda kart kontrolü yapıldı. " + "Player; " + player.name + " / Hand.Count; " + botHandList.Count);
             Debug.Log("Player; " + player.name + " / El gücü: " + earlyTourBotHandValue);
         }
     }
+
+
 }

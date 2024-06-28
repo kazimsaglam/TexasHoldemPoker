@@ -5,12 +5,31 @@ public class BotPlayer : Player
     private int botStraight;
     private int decision;
     GameState _state;
-
+    public int BOTPower;
 
     private void Start()
     {
 
         gameObject.tag = "Bot";
+        for (int i = 0; i < GameController.instance.playersAndBots.Count - 1; i++)
+        {
+
+            BOTPower = GameController.instance.botPower[i];
+            if (playerName == "Bot 1")
+            {
+                BOTPower = BOTPower = GameController.instance.botPower[0];
+            }
+            else if (playerName == "Bot 2")
+            {
+                BOTPower = BOTPower = GameController.instance.botPower[1];
+
+            }
+            else if (playerName == "Bot 3")
+            {
+                BOTPower = BOTPower = GameController.instance.botPower[2];
+
+            }
+        }
 
     }
 
@@ -20,7 +39,7 @@ public class BotPlayer : Player
         botStraight = earlyTourBotHandValue;
         if (botStraight == 0)
         {
-            decision = Random.Range(0, 4); 
+            decision = Random.Range(0, 4);
             Debug.Log("Player; " + playerName + " / Easy bot karar: " + decision);
 
         }
@@ -30,13 +49,13 @@ public class BotPlayer : Player
             Debug.Log("Player; " + playerName + " / Easy bot karar: " + decision);
 
         }
-        else if (botStraight > 3 )
+        else if (botStraight >= 3)
         {
             decision = Random.Range(7, 12);
             Debug.Log("Player; " + playerName + " / Easy bot karar: " + decision);
 
         }
-        
+
 
     }
     private void MediumBot()
@@ -60,7 +79,7 @@ public class BotPlayer : Player
             Debug.Log("Player; " + playerName + " / Medium bot kararý: " + decision);
 
         }
-        
+
     }
     private void HardBot()
     {
@@ -84,17 +103,17 @@ public class BotPlayer : Player
             decision = Random.Range(9, 12);
             Debug.Log("Player; " + playerName + " / Hard bot karar: " + decision);
         }
-      
+
     }
 
     public void MakeDecision(int currentBet = 0, int pot = 0)
     {
-        if (botsPower < 3)
+        if (BOTPower < 3)
         {
             EasyBot();
             Debug.Log("Easy bot çalýþtý.");
         }
-        else if (botsPower > 3 && botStraight < 7)
+        else if (BOTPower >= 3 && botStraight < 7)
         {
             MediumBot();
             Debug.Log("Medium bot çalýþtý.");
@@ -136,7 +155,7 @@ public class BotPlayer : Player
     bool ShouldFold(int currentBet, int pot, int karar)
     {
         // El zayýfsa ve bahis yüksekse fold et
-        return currentBet > pot / 4 && karar <= 2;
+        return /*currentBet > pot / 4 && */karar <= 2;
 
     }
 
@@ -156,7 +175,7 @@ public class BotPlayer : Player
     public void BotFold()
     {
         isFolded = true;
-      
+
         SoundManager.instance.PlayFoldSound();
     }
 

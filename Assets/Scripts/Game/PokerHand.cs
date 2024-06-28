@@ -19,6 +19,13 @@ public class PokerHand
     public int strength;
     public int earlyStrenght;
 
+    public static PokerHand instance;
+
+    private void Awake()
+    {
+        instance = this;
+
+    }
 
     public PokerHand()
     {
@@ -74,47 +81,53 @@ public class PokerHand
         IsHigh(cards);
     }
 
+    public void WinnerHandControl()
+    {
+
+    }
+
+
     public String PrintResult()
     {
         if (this.royalFlush)
         {
-            return "Royal Flush" + "- Strength:" + this.strength;
+            return "ROYAL FLUSH"/* + "- Strength:" + this.strength*/;
         }
         else if (this.straightFlush)
         {
-            return "Straight Flush" + "- Strength:" + this.strength;
+            return "STRAIGHT FLUSH"/* + "- Strength:" + this.strength*/;
         }
         else if (this.fourAKing)
         {
-            return "Four of a kind" + "- Strength:" + this.strength;
+            return "FOUR OF O KIND" /*+ "- Strength:" + this.strength*/;
         }
         else if (this.fullHouse)
         {
-            return "Full house" + "- Strength:" + this.strength;
+            return "FULL HOUSE" /*+ "- Strength:" + this.strength*/;
         }
         else if (this.flush)
         {
-            return "Flush" + "- Strength:" + this.strength;
+            return "FLUSH" /*+ "- Strength:" + this.strength*/;
         }
         else if (this.straight)
         {
-            return "Straight" + "- Strength:" + this.strength;
+            return "STRAIGHT" /*+ "- Strength:" + this.strength*/;
         }
         else if (this.threeAKind)
         {
-            return "Three of a kind" + "- Strength:" + this.strength;
+            return "THREE OF A KIND" /*+ "- Strength:" + this.strength*/;
         }
         else if (this.twoPair)
         {
-            return "Two Pair" + "- Strength:" + this.strength;
+            return "TWO PAIR"/* + "- Strength:" + this.strength*/;
         }
         else if (this.pair)
         {
-            return "Pair" + "- Strength:" + this.strength;
+            return "PAIR" /*+ "- Strength:" + this.strength*/;
         }
         else if (this.highCards)
         {
-            return "High card" + "- Strength:" + this.strength;
+            return "HIGH CARD"/* + "- Strength:" + this.strength*/;
         }
         else
             return "error setting hand.";
@@ -457,11 +470,10 @@ public class PokerHand
                 }
             }
         }
-
         return this.twoPair;
     }
 
-    private bool IsPair(List<Card> cards)
+    public bool IsPair(List<Card> cards)
     {
         this.highCard = new List<Card>();
         int count;
